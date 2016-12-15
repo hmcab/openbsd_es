@@ -1,0 +1,3022 @@
+
+######################
+### Absolute OpenBSD
+######################
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 3 Instalacion
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+Available network interfaces are: em0 em1 vlan0.
+Which one do you wish to configure? (or 'done') [em0]
+IPv4 address for em0? (or 'dhcp' or 'none') [dhcp] 192.0.2.85
+// No configurar vlan, em0, em1 son tarjetas de red.
+// Se configura direccion estatica, ya que la maquina un sera servidor.
+Netmask? [255.255.255.0] 255.255.255.128
+// Necesario al conf IP estatica.
+IPv6 address for em0? (or 'rtsol' or 'none') [none]
+// Opcional.
+Available network interfaces are: em0 em1 vlan0.
+Which one do you wish to configure? (or 'done') [done]
+Default IPv4 route? (IPv4 address, 'dhcp' or 'none') 192.0.2.1
+// Salida a Internet.
+add net default: gateway 192.0.2.1
+DNS domain name? (e.g. 'bar.com') [my.domain] blackhelicopters.org
+DNS nameservers? (IP address list or 'none') [none] 192.0.2.2 192.0.2.1
+
+// Usamos ! para obtener prompt de comandos
+// Regresamos a la instalacion pulsando exit.
+Available network interfaces are: em0 em1 vlan0.
+you Which one do you wish to configure? (or 'done') [em0] !
+Type 'exit' to return to install.
+# ifconfig
+lo0: flags=8008<LOOPBACK,MULTICAST> mtu 33152
+em0: flags=8802<BROADCAST,SIMPLEX,MULTICAST> mtu 1500
+        lladdr 00:0c:29:aa:09:21
+        media: Ethernet autoselect (1000baseT full-duplex,master)
+		// Reporta que interfaz em0 esta corriendo en 1000baseT
+		// full-duplex, y em1 no. Asi que esta es la que tenemos que
+		// configurar.
+        status: unknown
+em1: flags=8802<BROADCAST,SIMPLEX,MULTICAST> mtu 1500
+        lladdr 00:0c:29:aa:09:2b
+        media: Ethernet autoselect (none)
+        status: unknown
+vlan0: flags=0<> mtu 1500
+        lladdr 00:00:00:00:00:00
+
+Password for root account? (will not echo)
+Password for root account? (again)
+Start sshd(8) by default? [yes]
+// Permitira conectar a esta maquina inmediatamente
+// despues de la instalacion. Asegurarse de crear una
+// cuenta de usuario, de lo contrario se trabajara con
+// root. Mala idea.
+// Si no se hace, almenos deshabilita login con root.
+Start ntpd(8) by default? [no] yes
+NTP server? (hostname or 'default') [default]
+Do you expect to run the X Window System? [yes]
+// Si no se necesita consola grafica, deshabilitar acceso X.
+Do you want the X Window System to be started by xdm(1)? [no]
+Change the default console to com0? [no]
+
+Setup a user? (enter a lower-case loginname, or 'no') [no] mwlucas
+Full user name for mwlucas? [mwlucas] Michael W Lucas
+Password for mwlucas account? (will not echo)
+Password for mwlucas account? (again)
+Since you set up a user, disable sshd(8) logins to root? [yes]
+// Deshabilitamos login root para ssh.
+
+Time Zone
+OpenBSD asume que BIOS esta conf en UTC, de no serlo se debera corregir despues 
+de la instalacion. /pacifico.
+? Para ver opciones.
+
+Configuracion de disco. [Por defecto]
+En una instalacion dedicada se borran todos los datos del disco, OpenBSD no 
+avisa de esto. Aqui creamos una particion MBR y luego agregamos particiones de 
+OpenBSD. 
+// Al tener un solo disco.
+
+Available disks are: sd0.
+Which one is the root disk? (or 'done') [sd0]
+Use DUIDs rather than device names in fstab? [yes]
+
+
+Disk: sd0       geometry: 6527/ 255/ 63 [ 104857600 Sectors]
+Offset: 0       Signature: 0xAA55
+            Starting         Ending         LBA Info:
+ #: id      C   H   S -      C   H   S [       start:        size ]
+--------------------------------------------------------------------------
+ 0: 00      0   0   0 -      0   0   0 [           0:           0 ] unused
+ 1: 00      0   0   0 -      0   0   0 [           0:           0 ] unused
+ 2: 00      0   0   0 -      0   0   0 [           0:           0 ] unused
+ 3: 00      0   0   0 -      0   0   0 [           0:           0 ] unused
+Use (W)hole disk, use the (O)penBSD area, or (E)dit the MBR? [whole]
+Setting OpenBSD MBR partition to whole sd0...done.
+
+// Distribucion por defecto, permitimos que OpenBSD use disco entero.
+
+The auto-allocated layout for sd0 is:
+  #          size           offset  fstype [fsize bsize cpg]
+  a:         1.0G               64  4.2BSD   2048 16384    1 # /
+  b:         1.2G          2097216    swap
+  c:        50.0G                0  unused
+  d:         3.6G          4716480  4.2BSD   2048 16384    1 # /tmp
+  e:         5.7G         12176320  4.2BSD   2048 16384    1 # /var
+  f:         2.0G         24063040  4.2BSD   2048 16384    1 # /usr
+  g:         1.0G         28257344  4.2BSD   2048 16384    1 # /usr/X11R6
+  h:         6.3G         30354496  4.2BSD   2048 16384    1 # /usr/local
+  i:         1.9G         43566400  4.2BSD   2048 16384    1 # /usr/src
+  j:         2.0G         47467072  4.2BSD   2048 16384    1 # /usr/obj
+  k:        25.4G         51661376  4.2BSD   2048 16384    1 # /home
+Use (A)uto layout, (E)dit auto layout, or create (C)ustom layout? [a]
+
+/dev/rsd0a: 1024.0MB in 2097152 sectors of 512 bytes
+cylinder groups of 202.47MB, 12958 blocks, 25984 inodes each
+// Particiones seran sd0a, sd0b ...
+
+// Si bien booteamos por CD la instalacion de los archivos se realiza a
+// traves de FTP. Si tratamos de instalar una snapshot, damos la ruta.
+
+Let's install the sets!
+Location of sets? (cd disk ftp http or 'done') [cd] ftp
+HTTP/FTP proxy URL? (e.g. 'http://proxy:8080', or 'none') [none]
+Server? (hostname, list#, 'done' or '?') [ftp5.usa.openbsd.org] ftp.lambdaserver.com
+Server directory? [pub/OpenBSD/5.3/amd64]
+Login? [anonymous]
+
+Select sets by entering a set name, a file name pattern or 'all'. De-select
+sets by prepending a '-' to the set name, name pattern or 'all'. Selected
+sets are labelled '[X]'.
+    [X] bsd           [X] etc53.tgz     [X] xbase53.tgz   [X] xserv53.tgz
+    [X] bsd.rd        [X] comp53.tgz    [X] xetc53.tgz
+    [X] bsd.mp        [X] man53.tgz     [X] xshare53.tgz
+    [X] base53.tgz    [X] game53.tgz    [X] xfont53.tgz
+Set name(s)? (or 'abort' or 'done') [done] <<opciones>>
+
+// Para eliminar un paquete usamos -nombrePaquete
+// Para agregar +nombrePaquete
+// +-x* agregar/quitar aquellos que inician con x
+// * agregar todos
+
+Location of sets? (cd disk ftp http or 'done') [done]
+// Para instalar nuestros archivos personalizados / custom files.
+
+Configuracion de disco. [Personalizacion]
+
+Al tener multiples discos, se particiona uno a la vez y no se permite un 
+facil salto entre los discos, debemos tener bien definido su esquema de 
+particion.
+
+Al tener dos discos de 50gb
+Uno puede ser:
+
+Disco 1
+	1gb /, 1.2gb swap, 5gb /tmp, 1gb /usr/X11R6, 2gb /usr/src
+	2gb /usr/obj y todo lo demas en /home
+Disco 2
+	1gb /altroot, 1.2gb swap, 6gb /var, 10gb /usr/local y todo
+	lo demas en /var/postgresql
+
+/var/postgresql - Base de datos en su propia particion.
+
+Available disks are: sd0 sd1.
+Which one is the root disk? (or 'done') [sd0]
+
+Use (A)uto layout, (E)dit auto layout, or create (C)ustom layout? [a] c
+// Para crear nuestra distribucion. Particionado
+
+// Pasamos ahora a disklabel, indicado con >
+// ahora podemos definir nuestras particiones dentro
+// de la particion MBR.
+You will now create an OpenBSD disklabel inside the OpenBSD MBR
+partition. The disklabel defines how OpenBSD splits up the MBR partition
+into OpenBSD partitions in which filesystems and swap space are created.
+You must provide each filesystem's mountpoint in this program.
+The offsets used in the disklabel are ABSOLUTE, i.e. relative to the
+start of the disk, NOT the start of the OpenBSD MBR partition.
+Label editor (enter '?' for help at any prompt)
+>
+
+Imprimimos las particiones existentes
+> p m // megabytes
+> p g // gigabytes
+OpenBSD area: 64-104856255; size: 50.0G; free: 0.0G
+#                size           offset  fstype [fsize bsize  cpg]
+  a:             1.0G               64  4.2BSD   2048 16384    1
+  b:             1.2G          2104512    swap                   
+  c:            50.0G                0  unused
+  d:             5.0G          4610656  4.2BSD   2048 16384    1
+...
+
+Para borrar particiones
+> d
+partition to delete: [] a
+>
+// borramos particion - a -
+
+Para borrar la tabla entera de particiones
+> z
+> p
+OpenBSD area: 64-104856255; size: 104856191; free: 104856191
+#                size           offset  fstype [fsize bsize  cpg]
+  c:        104857600                0  unused
+>
+// c representa la particion entera MBR, 
+// ahora podemos crear nuestras particiones
+
+Creacion de particiones
+
+1gb / (root)
+1.2gb swap
+5gb /tmp
+1gb /usr/X11R6
+2gb /usr/src
+2gb /usr/src
+2gb /usr/obj
+todo lo demas en /home
+
+Por defecto disklabel crea las particiones en orden, podriamos hacerlo en 
+cualquier orden, pero necesitariamos jugar con los sectores y cilindros 
+para obtener los tamaños correctos. Aqui lo hacemos en orden.
+
+> a
+partition: [a]
+offset: [64] 
+// Implicitamente indica que el MBR contiene 63 sectores
+// de 0-62, Se deja libre el 63 para mejor alineamiento con
+// celdas de memoria.
+size: [104856191] 1g
+// b bytes, c cilindros, k kilobytes, m megabytes, g gigabytes
+Rounding size to cylinder (16065 sectors): 2104451
+FS type: [4.2BSD]
+// Sistema de archivos
+mount point: [none] /
+Rounding size to bsize (32 sectors): 2104448
+
+Seguimos con la siguiente particion (swap)
+> a
+// Haciendo uso de - a - disklabel asume que estamos usando la siguiente 
+letra libre para particion.
+
+partition: [b]
+offset: [2104512]
+size: [102751743] 1.2g
+Rounding size to cylinder (16065 sectors): 2506143
+FS type: [swap]
+// Asocia por defecto - b - con particion swap.
+>
+
+Seguimos la creacion de las particiones restantes de
+la misma forma. Creamos ahora la ultima particion /home
+
+> a
+partition: [h]
+offset: [25575456]
+size: [79280799]
+// utilizamos el espacio restante
+// al no especificar tamaño.
+FS type: [4.2BSD]
+mount point: [none] /home
+Rounding size to bsize (32 sectors): 79280768
+>
+> p
+// Imprimimos el particionado realizado
+
+Cuando el esquema de particionado sea el correcto, con q 
+lo pasaremos al disco.
+> q
+Write new label?: [y] y
+/dev/rsd0a: 1027.6MB in 2104448 sectors of 512 bytes
+...
+// Una vez iniciado el proceso de particionado se hace
+// muy dificil recuperar informacion anterior.
+
+Despues de particionar el primer disco, se ofrece la opcion
+de particionar cualquier otro. Por defecto no se particiona
+otro disco, si se elige otro disco, se debera crear particion
+MBR y disklabels.
+
+Available disks are: sd1.
+Which one do you wish to initialize? (or 'done') [done] sd1
+
+Comandos avanzados
+Cambiar parametros basicos del disco - e [Para nada recomendado]
+Cambiar descripcion fisica del disco?
+Modificar particiones existentes - m
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 4 Configuracion post-instalacion
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+Chequear parches o erratas
+	openBSD.org/errata.html
+Cambiar password de root
+
+Configuracion de software
+
+Una vez el kernel de OpenBSD finaliza su conf del sistema inicial deja el 
+control del sistema sobre el usuario. init corre el shell script /etc/rc. 
+Este script inicia todos los programas integrados al sistema y realiza 
+conf del sistema general, tales como interfaces de red e iniciacion de 
+software de servidor. Para habilitar, deshabilitar o conf de otra forma el 
+software integrado, modificamos archivos /etc/rc.conf y /etc/rc.conf.local. 
+Estos archivos contienen asignaciones de variables que controlan lo que 
+/etc/rc corre y opciones de linea de comandos para algunos programas.
+
+Algunas entradas en rc.conf.local sobrescriben declaraciones en rc.conf. 
+La mayoria tienen tres tipos de asignaciones. 
+NO, "argumento", ""
+
+// ntpd_flags controla las opciones de linea de comando
+// que /etc/rc usa cuando inicia ntpd.
+ntpd_flags=NO		// Deshabilita ntpd
+ntpd_flags=""		// Inicia ntpd sin arg
+ntpd_flags="-s" 	// Inicia ntpd con arg -s : ntpd -s
+
+// No modificar /etc/rc.conf, aqui aparecen opciones por defecto
+// Este es un archivo clave del sistema. Poner los cambios en
+// /etc/rc.conf.local, sus entradas seran reescritas en rc.conf
+
+Fecha y hora
+Con un horario correcto en el sistema evitamos ataques que dependen 
+de un cambio del reloj del sistema, y facilitamos el trabajo sobre 
+archivos logs.
+
+Configurando zona horaria
+Si no hubo una conf correcta en la instalacion, el directorio 
+/usr/share/zoneinfo contiene todas las zonas horarias, los 
+subdirectorios para paises o continentes. Para establecer la zona horaria, 
+creamos un enlace simbolico a este desde /etc/localtime, nos aseguramos 
+con date.
+
+# ln -fs /usr/share/zoneinfo/Asia/Omsk /etc/localtime
+# date
+Thu Mar 14 06:02:56 OMST 2013
+
+Una vez configurada la zona horaria, establecemos la fecha y hora,
+que podemos hacerlo bajo servidores NTP o manualmente.
+
+Manualmente (Formato 24horas)
+# date YYYYmmDDhhMM
+# date 201302031317 - Feb 3 2013 1:17pm
+
+Hostname
+$ cat /etc/myname
+caddis.blackhelicopters.org
+
+Para cambiarlo, modificamos archivo /etc/myname o bajo comando
+hostname. En ambos casos, tomara efecto luego de reiniciar.
+# hostname -s treble.blackhelicopters.org
+# hostname
+treble.blackhelicopters.org
+
+Networking
+Para hacer que los cambios tomen efecto, tu puedes reiniciar o correr el 
+script /etc/netstart
+# sh /etc/netstart
+Para conf solo una interfaz
+# sh /etc/netstart em0
+En caso de ser servidor, reinicia antes de ponerlo en produccion.
+
+Configurando interfaces ethernet
+Para una lista de las interface reconocidas corremos ifconfig
+Cada OpenBSD viene con interfaces lo0 (loopback) enc0 (encapsulacion)
+pflog0 (pf logging) - son virtuales.
+em0 (Ethernet interfaz) - cada Ethernet tiene su propio archivo de
+configuracion /etc/hostname.interfacename - en este caso sera
+/etc/hostname.em0, si el archivo no existe, crearlo.
+
+ifconfig name-interfaz ip-address netmask numnetmask broadcast numbroadcast
+
+# ifconfig eth0 192.168.1.102 netmask 255.255.255.0 broadcast 192.168.1.255
+# ifconfig eth0 down
+# ifconfig eth0 up
+
+Los formatos para direccion IP estatica dependeran de su version.
+
+IPv4
+inet ipaddress netmask broadcastaddress options
+
+Si broadcastaddress se deja en blanco, o NONE bajo ifconfig
+OpenBSD computara la correcta direccion broadcast tomando en
+cuenta la direccion IP y mascara. La mascara se puede proveer
+con notacion slash en la direccion IP. 192.0.2.2/24
+
+IPv6
+inet6 address prefixlength options
+
+La address sera sin prefijo de tamaño. El prefijo sera fijado separadamente
+ sin slash.
+
+// Configuracion con IPv4 e IPv6
+// Estos datos seran pasados a ifconfig
+// De no trabajar una configuracion, sera
+// mejor intentar directamente en la linea
+// de comandos. 
+$ cat /etc/hostname.em0
+inet 192.0.2.2 255.255.255.224
+inet6 2001:DB8::2 64
+Configuracion dinamica
+// Si se es un cliente DHCP usamos dhcp para IPv4
+// rtsol para IPv6 - Este ultimo dice a OpenBSD use
+// el programa de autoconfiguracion IPv6.
+$ cat /etc/hostname.em0
+dhcp
+rtsol
+
+Para permitir la autoconfiguracion IPv6 debemos deshabilitar
+el enrutamiento IPv6 estableciendo en /etc/sysctl.conf
+net.inet6.ip6.forwarding=0
+net.inet6.ip6.accept_rtadv=1
+// Estos valores estan listos, pero se encuentran comentados.
+
+Configurando gateway por defecto
+// Para establecer un gateway para ambos protocolos IPv4 , IPv6
+// modificamos /etc/mygate - hara efecto en el sgte reinicio.
+192.0.2.1
+2001:DB8::1
+
+Conf dinamica requiere de una ruta por defecto. Si se tiene
+una conf dinamica /etc/mygate no sera usado para ese protocolo IP.
+
+Configurando DNS
+Si se quiere contactar maquinas por su hostname se necesita un
+DNS. /etc/resolv.conf contiene las conf basicas del cliente.
+La primera linea define el dominio local, con domain domain_name
+La segunda define los nombres de los servidores, con nameserver IP_address.
+
+domain blackhelicopters.org
+nameserver 192.0.2.1
+nameserver 192.0.2.3
+
+Correo
+OpenBSD redirige mensajes de correo dirigidos a usuarios locales
+a otros usuarios o direcciones externas. Configurando /etc/mail/aliases
+Unas lineas en su entrada son:
+...
+# Basic system aliases -- these MUST be present
+MAILER-DAEMON: postmaster
+postmaster: root
+...
+
+Correo dirigido a MAILER-DAEMON en el sistema local es remitido a
+postmaster, y de este a root. Se deberia crear un alias para root
+dirigiendo el correo enviado a root al grupo de administradores.
+
+root: mwlucas@bigcompany.com, sysadminstaff@bigcompany.com
+
+// Despues de cambiar /etc/mail/aliases corremos newaliases para
+// actualizar la remision de correo.
+
+Teclado
+Para establecer la distribucion correcta de nuestro teclado, la
+buscamos en lista, usando kbd.
+# kbd -l | grep dvorak
+fr.dvorak
+us.dvorak
+...
+// dvorak es una distribucion.
+// Editamos archivo /etc/kbdtype - con distribucion adecuada
+// Esperamos que cambios hagan efecto en proximo reinicio.
+// Para poner distribucion inmediatamente usamos
+# kbd us.dvorak
+kbd: keyboard mapping set to us.dvorak
+
+Instalar ports y codigo fuente
+Seran necesarios para personalizacion avanzada o creacion de 
+paquetes. Ambos ports y codigo fuente estan especificados en 
+el OpenBSD liberado. Los ports estan en ports.tar.gz, se debe
+descomprimir en /usr
+# cd /usr/
+# tar -xzvf $HOME/ports.tar.gz
+// Obtendremos /usr/ports
+
+El codigo fuente se encuentra en tres archivos.
+kernel - sys.tar.gz
+userland - src.tar.gz
+xenocara - xenocara.tar.gz
+Extrae xenocara en /usr y los otros dos en /usr/src
+
+Booteando a consola grafica
+Para bootear a X-based graphic console modificamos
+/etc/rc.conf.local, por defecto es NO, lo cambiamos
+a xdm_flags=""
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 5 Proceso de booteo
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 6 Manejo de usuarios
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+Poder realizar todas las tareas con el minimo nivel de privilegios.
+Si no es necesario utilizar cuenta root para hacerla, entonces no usar la 
+cuenta. OpenBSD corre el servidor web con el usuario especifico www, en 
+lugar de root, asi si existe un acceso no autorizado, el intruso solo podra
+ dañar aquellos archivos a los que el usuario www tiene permitido.
+
+Agregando usuarios
+Solo root puede usar adduser, al ejecutarlo sin opciones aparece una
+interfaz interactiva, en que se establecen valores por defecto.
+
+# adduser
+Couldn't find /etc/adduser.conf: creating a new adduser configuration file
+Reading /etc/shells
+Enter your default shell: csh ksh nologin sh tcsh [ksh]: 1
+Your default shell is: ksh -> /bin/ksh
+Default login class: authpf bgpd daemon default staff
+[default]: 2
+Enter your default HOME partition: [/home]: 3
+Copy dotfiles from: /etc/skel no [/etc/skel]: 4
+Send welcome message?: /path/file default no [no]: 5
+Do not send message(s)
+Prompt for passwords by default (y/n) [y]: 6
+Default encryption method for passwords: auto blowfish des md5 old
+[auto]: 7
+
+1 shell a establecer, - ksh por defecto para usuarios nuevos.
+2 clase por defecto para login - default
+3 especificamos particion /home para directorios del los usuarios - /home 
+por defecto, elegir otro en caso de existir.
+4 directorio de archivos de config de cuentas dotfiles (.shrc .login 
+.profile) - por defecto
+5 ruta de archivo con mensaje de bienvenida - por defecto
+6 prompt para contraseña - por defecto
+Las cuentas de usuario estaran inactivas hasta que se les asigne una
+contraseña.
+7 algoritmo de encriptacion para hash las contraseñas, que seran
+almacenadas en /etc/master.passwd
+A menos que necesites interoperabilidad o sepas lo que haces, acepta los 
+valores por defecto.
+
+De ahora en adelante adduser usara estos valores por defecto elegidos. 
+si los quieres cambiar hazlo en /etc/adduser.conf
+
+Ahora que establecimos los valores por defecto, ejecutamos adduser de
+nuevo para crear nuevas cuentas de usuario.
+
+# adduser
+Enter username []: pkdick
+Enter full name []: Phil Dick
+Enter shell csh ksh nologin sh tcsh [ksh]:
+ksh fue elegida por defecto anteriormente
+los usuario pueden cambiar su shell, si se les permite
+Uid [1001]:
+Por defecto inicia en 1000 y adduser usa el numero minimo disponible
+Login group pkdick [pkdick]: 
+Login group is 'pkdick'. Invite pkdick into other groups: guest no
+[no]: wheel
+
+Cada usuario es asignado a un grupo con su mismo nombre de usuario, 
+(login group) primary group, y es solo uno. Pero se pueden asignar 
+cuentas de usuario a multiples grupos secundarios.
+
+Para que este usuario pueda usar cuenta root se agrega, invita el usuario 
+al grupo wheel. otros grupos serian staff, users, operator.
+
+Login class authpf bgpd daemon default staff [default]: staff
+Si aun no entiendes, deja el por defecto, si eres usuario administrador
+(ej: estas en grupo wheel) o usuario de escritorio elige staff.
+
+Si activaste promt para password, aqui se te pedira la contraseña.
+Enter password []:
+Enter password again []:
+
+Por ultimo adduser muestra todos los valores dados, aceptamos.
+Name:        pkdick
+Password:    ****
+Fullname:    Phil Dick
+Uid:         1001
+Gid:         1001 (pkdick)
+Groups:      pkdick wheel
+Login Class: staff
+HOME:        /home/pkdick
+Shell:       /bin/ksh
+OK? (y/n) [y]: y
+
+Agregando usuarios no interactivamente (batch mode)
+
+#adduser -batch username group 'real name' encryptedpassword
+#adduser -batch pkdick wheel 'Phil Dick' NotThePassword
+NotThePassword no es la contraseña en si misma, adduser espera que 
+proveamos un random salt (sal) que hashes a cadena NotThePassword.
+
+Grupos no interactivo (batch mode)
+
+Los usuarios se agregan a un grupo primario con su mismo nombre de 
+usuario, en el ejemplo anterior el usuario es agregado a grupo pkdick. 
+Si queremos cambiar nuestro grupo primario para un usuario usamos 
+-group
+
+#adduser -group guest -batch jgballard customers 'Jim Ballard' NotThePass
+word
+Agregamos a jgballard al grupo primario de invitados (guest) y lo agregamos
+tambien al grupo de customers.
+
+Para asignar un usuario a multiples grupos separamos los grupos usando 
+comas.
+#adduser -batch jgballard customers,sftp-only 'Jim Ballard' NotThePassword
+Agregamos a jgballard al grupo primario jgballard, y a grupos secundarios 
+customers y sftp-only.
+
+Contraseñas y (batch mode)
+
+En los ejemplos anteriores tu creaste una cuenta con una contraseña 
+desconocida. Los SO Unix actualmente almacenan un hash de la contraseña. 
+El sistema toma la contraseña, agrega un salt (sal) y genera un hash de 
+ella. El sistema almacena este hash en /etc/master.passwd. Para el proceso 
+de login, se toma la cadena suministrada, la sal y se genera el hash que 
+debe coincidir con el almacenado.
+
+Necesitamos proveer una contraseña encriptada pregenerada, una contraseña 
+no encriptada, y permitir a adduser calcular el hash por nosotros o crear 
+una cuenta sin contraseña.
+
+Para crear una cuenta sin contraseña - aceptable para cuentas que
+corren daemons o para help desk
+#adduser -batch pkdick wheel 'Phil Dick'
+
+Si queremos ingresar una contraseña no encriptada usamos -unencrypted
+Poner esta opcion antes de -batch
+#adduser -unencrypted -batch pkdick wheel 'Phil Dick' IsThePassword
+
+La contraseña aparecera en la lista de procesos del sistema.
+Otra opcion es generar una contraseña prehashed usando encrypt.
+encrypt por defecto da una lista en blanco, cuando ingresas la palabra
+este nos da el hash correspondiente a ella. Usa por defecto el algoritmo 
+definido en la clase login. Por mucho tiempo ha sido blowfish.
+
+# encrypt
+gerbil
+$2a$06$V/VO91VVAKSNslesQNH6pezXsGhoKUMcnvWxyDOJUmWRk3fflX5cy
+weasel
+$2a$06$652ngShUnOBuFEL7X2yrf.E0U2GUw/FseVq/BkVgaiyqvp4wt.Nsy
+^C ctrl+c
+# 
+
+Para encriptar una contraseña o crearlas interactivamente, con opcion
+-p apagamos el echo.
+# encrypt -p
+Enter string:
+$2a$06$nyA.mygoei/6VGS2tq4wA.VOzB6inwlK9pWOIAsiUWBkWf0CqOJ7.
+#
+
+Otras opciones en modo (batch)
+
+adduser.conf contiene las opciones por defecto para administradores de
+sistemas. Todas las opciones deben aparecer antes de opcion -batch, pues 
+despues de esta todo es considerado como informacion de la cuenta.
+
+-noconfig
+	No leer opciones por defecto de adduser.conf. Esto garantiza que 
+opciones administrativas no pasen a cuentas (no privilegiadas).
+-dotdir
+	Especifica un directorio para archivos dotfiles del usuario. Todos los 
+archivos en este directorio son copiados al directorio home del usuario.
+-home
+	Especifica donde crear el nuevo directorio home del usuario.
+Este no es el actual directorio home , pero es el directorio base donde el 
+directorio home sera creado. Ej: Si todos tus clientes de tu servidor web 
+tienen un directorio home en particion /www, deberias usar -home /www.
+-class 
+	Para asignar una clase -no login- por defecto. Clase diferente a login.
+-message da una ruta/path al nuevo mensaje de usuario.
+-message no, para apagarlo.
+
+Para asignar una shell usamos -shell y el nombre de shell como aparece en 
+/etc/shells o usamos nologin para desactivar logins.
+
+Si se desea podemos especificar rangos de UIDs para usuarios tradicionales 
+con UIDs por arriba de 10000 y usuarios admin con UIDs por abajo de 1000.
+
+Las opciones 
+-uid_start 10000 -uid_end 10100
+-uid_start 100 -uid_end 1000
+Si es aceptado el UID, el GID del grupo sera el mismo del usuario.
+
+Restricciones
+username contienen caracteres y digitos, 31 caracteres como maximo.
+full names no contienen (dos puntos) :
+Otros valores deben existir en los archivos pertinentes: shells en 
+/etc/shells, login classes en /etc/login.conf y asi.
+
+Eliminando cuentas de usuario
+
+#rmuser pkdick
+Matching password entry:
+pkdick:*:1001:1001::0:0:phil dick:/home/pkdick:/bin/ksh
+Is this the entry you wish to remove? y
+Remove user's home directory (/home/pkdick)? y
+Updating password file, updating databases, done.
+Updating group file: Removing group pkdick -- personal group is empty
+ done.
+Removing user's home directory (/home/pkdick): done.
+
+Editando cuentas de usuario
+
+Los usuarios pueden editar su cuenta ejecutando chpass sin argumentos.
+
+$ chpass
+$ Changing user database information for mwlucas.
+Shell: /usr/local/bin/tcsh
+Full Name: mwlucas
+Office Location:
+Office Phone:
+Home Phone:
+
+Si corremos chpass como root y el nombre de un usuario obtenemos un 
+escenario diferente.
+
+# chpass mwlucas
+# Changing user database information for mwlucas.
+Login: mwlucas
+Encrypted password: $2a$08$s2EVX.cAhYHskOaHk/4C5eLn76atAmGPU7z5DqRKAYe/V.OG
+gWXVi
+Uid [#]: 1000
+Gid [# or name]: 1000
+Change [month day year]:
+Expire [month day year]:
+Class: staff
+Home directory: /home/mwlucas
+Shell: /usr/local/bin/tcsh
+Full Name: mwlucas
+Office Location:
+Office Phone: \n Home Phone:
+
+chpass afecta a /etc/passwd /etc/master.passwd y /etc/group si haces 
+cambios al UID, GID o directorio home del usuario, tambien debes hacer los
+correspondientes cambios a los archivos y directorio home del usuario. Si 
+tenemos /newhome/mwlucas en /etc/passwd pero conservamos los archivos aun 
+en /home/mwlucas, tendremos problemas. La cuenta no trabajara correctamen
+te.
+
+Para editar el archivo password directamente, usamos vipw sobre 
+/etc/passwd. Normalmente se usa cuando passwd esta dañado, y comunmente se
+daña al usar vipw.
+
+Login classes
+
+Login classes establecido en /etc/login.conf define los recursos e 
+informacion accesible para los usuarios. Permite controlar el tamaño de 
+las contraseñas y el tiempo de expiracion, como tambien mecanismos de 
+autenticacion externa.
+
+Cada usuario es asignado a una clase y cada clase limita los recursos 
+disponibles.
+
+Cuando se cambian los limites, estos tendran efecto en cada usuario en su 
+proximo inicio de sesion. Se define una clase cuando creamos una cuenta o 
+cuando la moficamos con chpass. login.conf ofrece dos clases por defecto 
+una para daemons y una de casos especiales. La clase <default> da al 
+usuario un amplio acceso a los recursos del sistema y es recomendado para 
+maquina s con limitado numero de shells. 
+
+La clase <staff> no da al usuario ninguna restriccion en el uso de memoria,
+establece un alto limite en el numero de procesos que el usuario puede 
+correr concurrentemente, y permite al usuario entrar al sistema cuando las
+entradas estan prohibidas.
+
+Si estas dos clases cumplen tus necesidades y no quieres adicionar un 
+protocolo de autenticacion como <Remote Authentication Dial In User 
+Service> RADIUS o kerberos, puedes escapar esta sesion.
+
+Definicion de Login classes
+
+Cada clase consiste de una serie de asignamientos de variable que 
+describen los limites de recursos de la clase, autenticacion y entorno. 
+Cada asignamiento de variable en la definicion de una clase inicia con : 
+y termina con : El backslash indica que la clase continua en la siguiente 
+linea.
+
+Definicion default
+default:\
+1    :path=/usr/bin /bin /usr/sbin /sbin /usr/X11R6/bin /usr/local/bin 
+/usr/local/sbin:\ # rutas de busqueda para shell del usuario $PATH
+2    :umask=022:\
+3    :datasize-max=512M:\
+     :datasize-cur=512M:\
+     :maxproc-max=256:\
+     :maxproc-cur=128:\
+     :openfiles-cur=512:\
+     :stacksize-cur=4M:\
+     :localcipher=blowfish,6:\
+     :ypcipher=old:\
+4    :tc=auth-defaults:\ # used for conf serial console clients
+     :tc=auth-ftp-defaults:
+	 
+4 su valor defaults copia opciones de las entradas auth-defaults y 
+auth-ftp-defaults de login.conf.
+Algunas variables no requieren de valores, por ejemplo requirehome 
+significa que el usuario debera tener un directorio home valido.
+
+Modificando login.conf
+
+En muchos casos es necesario pasar login.conf a un archivo de base de 
+datos login.conf.db con cap_mkdb. OpenBSD no requiere esto. Los programas 
+chequearan primero el archivo .db de no encontrarlo pasaran al archivo 
+plano. Podemos crear el archivo .db
+
+# cap_mkdb /etc/login.conf
+Cada vez que editemos login.conf deberemos reconstruir el archivo .db con 
+cap_mkdb, Finalmente podremos eliminar el archivo .db para forzar a las 
+aplicaciones a trabajar con login.conf. Se recomiendo escapar a .db en 
+hardware reciente.
+
+Valores legales para login.conf
+
+- Camino completo a un archivo de texto o programa
+- Una lista separada por comas de variables de entorno
+- Una lista de valores separados por comas
+- Un numero 0x al frente para hexadecimales || 0 para octales
+- Una lista separada por espacios de pathnames (rutas)
+- Un tamaño en bytes por defecto, kilobytes K, megabytes M, gigabytes G
+o 512 byte blocks T
+- Un tiempo en alguna combinacion de segundos (solo si no se usa una unidad
+dada) minutes m, hours h, days d, weeks w, years y.
+
+Variables que usan pathnames aceptan simbolos especiales como ~ y $
+~/
+~mwlucas
+~/bin
+En todos los casos ~ representa el directorio home del usuario.
+
+/var/mail/$
+$ representa el nombre del usuario.
+
+Limitando recursos
+
+Permite controlar la cantidad de recursos del sistema que cualquier
+usuario puede monopolizar en cualquier momento. Limitando los recursos
+que un usuario puede usar, hace al sistema mas responsable.
+Esto previene que daemons con filtraciones absorban tiempo de CPU, 
+memoria, dandole esto a una login class.
+
+Algunos limites de recurso para login.conf
+variable		descripcion
+--------        --------------------------------------------------
+coredumpsize	Maximum size of a core dump file
+cputime			Maximum CPU time any one process can use
+datasize 		Maximum data size per process
+filesize 		Maximum size of any one file
+maxproc 		Maximum number of processes
+memorylocked	Maximum locked-in core memory use per process
+memoryuse 		Maximum core memory use per process
+openfiles 		Maximum open file descriptors per process
+stacksize 		Maximum stack size per process
+vmemoryuse 		Maximum virtual memory use per process
+
+Son generalmente puestos por proceso.
+200MB de RAM por cada proceso, y se permite 40 procesos por usuario, se 
+tendra que disponer de 8000MB de RAM.
+Todas las variables excepto vmemoryuse soportan maximum y current limits.
+Los usuarios son advertidos por el sistema cuando excedan el limite
+current y no podran exceder el limite maximum. Para especificar el limite 
+current se agrega -cur al final de la variable y el maximum con -max.
+
+maxproc-cur: 50:\
+maxproc-max: 60:\
+
+Un usuario en esta clase recibira advertencia cuando use mas de 50 
+procesos, y no sera posible usar mas de 60. Si no se especifica un limite 
+current o maximum, este actua para ambos.
+
+Modificando el entorno de shell
+Se pueden definir opciones de entorno en una clase de usuario <user class>.
+Esto podria ser mejor que ponerlos en el shell profile por defecto, ya que
+los cambios seran efectivos en el proximo inicio de sesion, y afectara a 
+todos los usuarios de shell, incluso aquellos que no lean .profile o 
+.cshrc.
+
+Algunas variables de entorno en login.conf
+-----------------------------------------------------------------------
+hushlogin
+	If present, no system information is given out during login.
+ignorenologin
+	User can log in even when /etc/nologin file is present.
+nologin
+	Path to a file. If the file exists, when a user tries to log in, the 
+file contents are displayed and login is denied.
+path
+	Default command search path.
+priority
+	User's priority (nice) level. See renice(1).
+requirehome
+	If present, user must have valid home directory to log in.
+setenv
+	A comma-separated list of environment variables and values.
+shell
+	User shell. Overrides user shell selection in /etc/passwd. The user's 
+$SHELL environment variable reflects /etc/passwd, resulting in an 
+inconsistent environment. Playing games with this is an excellent 
+way to annoy/molestar your users.
+term
+	Default terminal type, if environment can't 
+	figure out/resolver/entender terminal type.
+umask
+	Initial umask. Should always start with a 0.
+welcome
+	Path to a file containing the login message.
+
+Password and login options : 144 - 150
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 7 Root, y como evitarlo
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+Root password
+Para convertirse en super usuario se puede loguear como root
+(directamente), usar (su) para convertirse en root, o usar sudo para
+obtener ciertos privilegios a nivel de root sin usar la cuenta root.
+
+Para usar el root password se puede loguear a traves de un prompt como 
+root (directamente), o si perteneces al grupo wheel, loguearte desde tu 
+sesion de usuario con el comando de intercambio (su). Recomiendo su (ya 
+puede ser usado desde una sesion remota).
+
+$ su
+password:
+#
+
+# id
+uid=0(root) gid=0(wheel) groups=0(wheel), 2(kmem), 3(sys), 4(tty), 
+5(operator), 20(staff), 31(guest)
+
+uid=0 (significa que somos dueños del sistema)
+
+Solo usuarios del grupo wheel pueden usar root password para convertirse 
+en root atraves de su.
+
+Una vez el sistema este configurado y corra apropiadamente, puedes 
+decrementar o discontinuar el uso de root, y para cualquier tarea que 
+necesite privilegios, usa sudo.
+
+Using groups
+Podemos clasificar usuarios en grupos, cuyo grupo puede efectuar 
+funciones administrativas. Es posible crear un grupo dnsadmins y agregar 
+cuentas de usuarios quienes editan archivos de zona DNS. Se puede crear 
+un grupo para casi cualquier funcion del sistema y asi evitar usar root.
+
+Para ver los grupos a los que un usuario pertenece (En este caso nuestro
+usuario mwlucas)
+# id
+uid=1000(mwlucas) gid=1000(mwlucas) groups=1000(mwlucas), 0(wheel), 
+2005(dnsadmin)
+
+UID 1000 username mwlucas
+GID 1000, grupo primario nombrado tambien mwlucas
+Ademas mwlucas pertenece al grupo wheel y dnsadmin
+
+The /etc/group file
+Contiene informacion de los grupos, uno por cada linea y tiene 4 campos 
+cada uno delimitado por : 
+nombre_de_grupo:password:numero_ID_GID:lista_de_miembros
+
+wheel:*:0:root,mwlucas,pkdick
+
+El GID maximo es 232 o 4,294,967,296.
+Para agregar usuarios al grupo, agrega su username a la
+lista. Ninguna entrada podra tener mas de 200 usuarios
+o ser mas larga que 1024 caracteres.
+
+Creating Groups
+Solo es necesario tener un nombre y un GID.
+OpenBSD normalmente asigna el siguiente GID libre al nuevo grupo creado, 
+con GIDs por debajo de 1000 reservado para OpenBSD. Programas incluidos en 
+OpenBSD que necesitan un grupo ID dedicado por debajo de 1000. Software 
+instalado a traves del gestor de paquetes o ports normalmente tienen GIDs 
+de 500 a 1000. GIDs para cuentas de usuario inician en 1000 en adelante. 
+Crear usuarios admin, recomendamos iniciar en un GID alto.
+
+Groups, Unprivileged Users, and Group Permissions
+# ls -la
+total 22
+drwxr-xr-x  2 mwlucas  wheel     512 Apr 16 22:02 .
+drwxrwxrwt  8 root     wheel     512 Apr 16 22:00 ..
+-rw-rw-r--  1 mwlucas  mwlucas 14595 Apr 16 22:02 michaelwlucas.com.db
+-rw-r-----  1 mwlucas  wheel     198 Apr 16 22:02 rndc.key
+
+michaelwlucas.com.db
+Su dueño es mwlucas y pertenece al grupo mwlucas
+Su dueño puede rw, cada integrante del grupo mwlucas
+puede rw, y otros solo r.
+
+rndc.key
+Su dueño es mwlucas y pertenece al grupo wheel
+Su dueño puede rw, cada integrante del grupo wheel
+puede r, y otros no pueden hacer nada.
+
+# chown dnsadmin:dnsadmin michaelwlucas.com.db
+# chgrp dnsadmin rndc.key
+# chown dnsadmin:dnsadmin .
+# chmod 775 .
+# ls -la
+total 22
+drwxrwxr-x  2 dnsadmin  dnsadmin    512 Apr 16 22:02 .
+drwxrwxrwt  8 root      wheel       512 Apr 16 22:08 ..
+-rw-rw-r--  1 dnsadmin  dnsadmin  14595 Apr 16 22:02 michaelwlucas.com
+-rw-r--r--  1 root      dnsadmin    198 Apr 16 22:02 rndc.key
+
+Usuarios del grupo dnsadmin pueden modificar zona de archivos o
+DNS michaelwlucas.com.db o crear nuevas zonas (w para directorio) sin
+acceder a root, pero solo leer a rndc.key.
+
+<Los usuarios de dnsadmin no podran modificar a rndc.key, pero si
+eliminarlo o reemplazarlo.> Para evitar esto, se puede poner a 
+rndc.key en otro directorio que ellos puedan leer pero no editar.
+Podemos usar rndc para manejar el servidor DNS; otras tareas con cron o
+incluso sudo. 
+
+Hiding root with sudo
+sudo permite a usuarios normales correr especificos programas como otros
+usuarios, incluido root. Cada comando via sudo es logged, por lo que es
+facil rastrear quien hizo que. La configuracion de sudo esta diseñada
+para ser compartida a traves de multiples sistemas, asi que una politica
+sudo puede cubrir tu red entera y cada sistema operativo. Para usuarios
+Mac OSX se tendran problemas, pero entre BSDs, linux e incluso AIX y
+opensolaris sera transparente. Una mala conf de sudo, permitira que un
+usuario escale a root.
+
+An overview of the sudo software
+El programa sudo es un 'setuid root wrapper' que permite correr comandos
+como cualquier otro usuario.
+$ sudo /etc/rc.d/named restart
+
+sudo compara el comando deseado (en este caso /etc/rc.d/named restart) con
+su lista interna de permisos y privilegios. Si la configuracion del archi-
+vo permite que un particular usuario corra el comando como root, sudo corre
+este como root. Se permite ademas, correr comandos como cualquier usuario
+arbitrario del sistema. Administradores pueden ejecutar comandos como 
+usuarios de la base de datos.
+
+sudo lo componen cuatro piezas, sudo, el archivo de configuracion 
+/etc/sudoers el cual describe quien debe correr que comandos con que usua-
+rio, visudo un comando que abre /etc/sudoers chequea su configuracion
+antes de hacerse efectivo. Y finalmente sudoedit especificamente usado
+para editar archivos como otro usuario.
+
+The visudo command
+Si /etc/sudoers contiene errores de sintaxis, sudo no correra. Si confias
+en sudo para proveer acceso a nivel de root y corrompes el archivo sudoers,
+quedaras fuera de la cuenta root y perderas la habilidad para corregir el
+error. visudo provee proteccion para este error, bloqueando el archivo
+sudoers para que solo una persona edite el archivo a la vez. La edicion se
+hace sobre editor declarado en variable $EDITOR. Al guardarse los cambios
+visudo parsea el archivo para verificar su contenido. En caso de error
+imprime la linea que lanza el error, y pregunta que hacer.
+
+>>> /etc/sudoers: syntax error near line 34 <<<
+What now?
+E para regresar al editor y corregir errores.
+X para salir sin guardar cambios. (volver a version estable).
+Q fuerza a visudo aceptar los cambios. Si sudo no puede parsear
+el archivo /etc/sudoers se cerrara inmediatamente.
+visudo no garantiza que la conf hara lo que se desea, solo que la
+conf es parseable y valida.
+
+The /etc/sudoers file
+No editar el archivo sudoers directamente, siempre usar visudo.
+Cada regla sudoers sigue el formato:
+username	host=command
+
+username
+	Nombre del usuario quien debe ejecutar el comando, un alias para
+usernames o un grupo del sistema.
+host
+	hostname del sistema en que esta regla aplica. Esta entrada permite
+reglas por-host.
+command
+	lista de comandos que esta regla aplica. Se debe especificar la ruta
+completa del comando, o sudo no lo reconocera.
+
+Supongamos que confiamos en usuario baxter para correr cualquier comando,
+en cualquier sistema, como root. Utilizamos ALL para concordar con todas
+las posibles opciones para host y command.
+baxter	ALL=ALL
+
+Supongamos que yo controlo la edicion de archivos de zona con permisos de
+grupo, pero baxter en sus deberes podra stop, restart el programa DNS. Yo
+quiero que se use el script /etc/rc.d/named para esta tarea, y la entrada
+sudoers para dar este permiso en todas las maquinas es:
+baxter	ALL=/etc/rc.d/named
+
+Si se comparte este archivo a traves de muchas maquinas, probablemente
+muchas de ellas no corran un servidor de nombres. Para restringir el
+acceso solo sobre el servidor DNS cambiamos a:
+baxter	dns1=/etc/rc.d/named
+
+Finalmente baxter es el admin del servidor de correo mail1. Este servidor
+es su responsabilidad y necesita correr cualquier comando. Podemos poner
+diferentes privilegios para el en el servidor de correo y todavia usamos
+el mismo archivo sudoers en todos los sistemas. 
+baxter	dns1=/etc/rc.d/named
+baxter	mail1=ALL
+
+baxter puede usar visudo en mail1. Si bien ya tiene privilegios completos
+en esa maquina.
+
+Multiple entries in a sudoers field
+Cansado de que baxter me interfiriera para montar una particion NFS en el
+servidor DNS, yo extendi sus permisos.
+baxter	dns1=/etc/rc.d/named,/sbin/mount_nfs
+El ahora puede montar su NFS.
+
+Running commands as non-root users
+Especificar un nombre de usuario en parentesis antes de un comando para
+decir que el usuario puede usar sudo para correr comandos como un usuario
+en particular. Usuario dwsmith es un administrador de bd y necesita correr
+cualquier comando como el usuario _postgresql en el servidor de base de
+datos db1.
+dwsmith		db1 = (_postgresql) ALL
+
+El usuario _postgresql no puede correr programas criticos del sistema como
+fdisk y newfs, pero puede reiniciar la base de datos, back it up
+(respaldarla) y otras tareas relacionadas. Eligir un usuario especifico,
+una maquina especifica y un comando especifico se pueden definir complejas
+politicas sudoers.
+
+Long lines
+Use \ para indicar que una regla continua en la siguiente linea.
+baxter	dns1=/etc/rc.d/named,/sbin/mount_nfs, \
+	/sbin/reboot,/sbin/dump
+
+/etc/sudoers Aliases
+Toma muchas maquinas con diferentes roles, agrega multiples admin con
+diferentes niveles de privilegios y tu /etc/sudoers se hara cada vez mas
+complicado. Cuando se tiene muchos usuarios con identicos privilegios y
+largas listas de comandos a los que quisieras que ellos accedieran,
+mantener consistente la lista de privilegios de cada usuario se vuelve
+tedioso.
+Los aliases simplifican esta tarea. Un alias es un grupo de usuarios, hosts
+o comandos. Puedes usar aliases donde normalmente usas usuarios, hosts o
+comandos. Un alias llamado DATABASE_COMMANDS que contiene todos los
+comandos que los admin de bd necesitan correr usando sudo.
+
+dwsmith		db1=(_postgresql) DATABASE_COMMANDS
+
+No parece mucho, pero si lo extendemos para incluir todo de ellos.
+DBAs	db1=(_postgresql) DATABASE_COMMANDS
+
+Todos los admins_db tienen identicos privilegios y cuando se necesite
+adicionar un nuevo comando, solo basta agregarlo al alias. Solo se debe
+definir un alias antes de usarlo, asi normalmente los alias aparecen en
+la cima del archivo. Cada alias se compone de un label que identifica su
+tipo, un nombre, y una lista de sus items. Los tipos incluyen alias de
+usuario, alias de ejecucion, alias de host, alias de comandos.
+
+Alias de usuario
+Un alias de usuario es grupo de usuarios y este es etiquetado con la
+cadena User_Alias. Poner solo nombre de usuarios en este alias.
+User_Alias	DBAs=dwsmith,kkrush
+Aqui el alias de usuario tiene los usuarios dwsmith, kkrush. Usando este
+alias nos aseguramos que estos usuarios reciban los mismos privilegios
+sudo.
+Podemos usar grupos del sistema en los alias de usuario anteponiendo a
+ellos el signo %. Por ejemplo, si tenemos el grupo databaseteam en
+/etc/groups y queremos que los usuarios dwsmith y kkrush sean parte de ese
+grupo hacemos.
+%databaseteam	db1=(_postgresql) DATABASE_COMMANDS
+
+Quizas el uso mas comun para esto es dar al grupo wheel ilimitado acceso
+sudo.
+%wheel ALL = ALL
+Esta regla permite al grupo wheel correr cualquier comando como root a
+traves de sudo. Esto no cambia los privilegios de los miembros del grupo,
+pero les da a ellos acceso via sudo. Esto es conveniente para correr 
+comandos individuales.
+
+Alias de ejecucion
+Un alias de ejecucion es una lista de usuarios de manera que otros 
+usuarios puedan correr comandos. "A run as alias is a list of users that
+other users can run commands as." Por ejemplo en ciertas aplicaciones de
+servidor, los admin_db necesitan correr ambos comandos como el dueño de
+la bd _postgresql y como el dueño del servidor web www. Si el usuario debe
+correr comandos como multiples usuarios, sin embargo, se necesitara una
+entrada sudoers separada para cada usuario objetivo. Un alias de ejecucion
+permite agrupar estas cuentas.
+Runas_Alias		APPOWNER = _postgresql, www
+Ahora puedes escribir una unica regla que permita a los usuarios correr
+comandos como _postgresql o www.
+
+Alias de host
+Un alias de host es una lista de hosts, definida como hostnames, direcs IP,
+o bloques de red.
+Host_Alias	DB = db1,db2,db3
+Host_Alias	DMZ = 192.0.2.0/24
+Host_Alias FIREWALL = 192.0.2.1, 192.0.2.2, 192.0.2.3
+
+"I warn elsewhere in this book about how security rules based on a 
+hostname are vulnerable to DNS spoofing attacks. An intruder canâ€™t
+spoof the machineâ€™s local hostname, however, so you can safely use the
+hostname from /etc/myname in sudoers."
+
+Alias de comando
+Un alias de comando es una lista de comandos. Por ejemplo necesitas un
+alias de comando que incluya todos los comandos necesarios para back up el
+sistema o restaurar desde un back up.
+
+Cmnd_Alias	BACKUPS = /bin/mt, /sbin/restore, /sbin/dump
+
+Puedes incluso decirle que incluya todo lo de un directorio en particular.
+Cmnd_Alias	APPCOMMANDS = /home/appuser/bin/*
+
+Tambien se puede listar nombres de comando parcialmente. Por ejemplo los
+comandos para PostgreSQL inician normalmente con pg_.
+Cmnd_Alias	APPCOMMANDS = /home/appuser/bin/*,/usr/local/bin/pg_*
+
+Si encuentras alias de comando que incluyan /sbin/*, reconsideralo, por
+que esencialmente le estas dando al usuario acceso root ilimitado.
+
+Using aliases in /etc/sudoers
+Use un alias exactamente como tu lo harias normalmente con una lista de
+usuarios, comandos o hostname. En el ejemplo anterior definimos el alias
+DBAs, el alias de ejecucion como APPOWNER, el alias de host DB y el alias
+de comandos APPCOMMANDS. Aqui esta como deberiamos usarlos.
+DBAs	DB=ALL
+Aqui el grupo de usuarios DBAs puede correr cualquier comando en cualquier
+servidor en el grupo DB, como cualquier usuario. Los miembros del grupo
+dueño de los servidores, y si ellos lo arruinan no es mi problema. La
+verdad es que si ellos destrosan el servidor, yo deberia estar involucrado,
+y se convierte en mi problema. Yo deberia bloquear los comandos que ellos
+pueden usar, restringiendolos a ellos a solo los comandos en APPCOMMANDS.
+Asi el grupo DBAs puede ahora correr cualquier comando de APPCOMMANDS en
+los servidores DB.
+
+DBAs	DB = APPCOMMANDS
+
+Luego descubro que los administradores de base de datos son inteligentes o no
+de lo que pensaba. Ellos corren ciertos comandos de la base de datos como root,
+creando archivos log en los que el dueño es root. Los usuarios de la base de datos
+sin privilegios como _postgresql no podran escribir a estos archivos log, y asi el
+servidor de aplicaciones colabsara. Reparar esto requiere cambiar los
+permisos a estos archivos, pero el admin de base de datos no tiene permiso para
+correr chown. Si les doy esta habilidad de cambiar los permisos, debo darles
+tambien acceso como root. Para evitar que esto ocurra de nuevo, restrinjo sus
+privilegios asi ellos pueden correr sus comandos solo como usuarios de aplicacion
+sin privilegios.
+
+DBAs	DB = (APPOWNER) APPCOMMANDS
+
+Cada uno en el grupo DBA podra correr cualquier comandos en APPCOMMANDS , como
+cualquier usuario en APPOWNER, en cualquier servidor en DB. Yo puedo cambiar su
+acceso agregando entradas a los aliases.
+Sin aliases, las reglas lucirian asi:
+dwsmith,kkrush	db1,db2,db3 = (_postgresql,www) \
+/home/appowner/bin/*,/usr/local/bin/pg_*
+
+Con el mismo resultado pero con daño a la vista cuando sean en
+verdad grandes. El objetivo perseguido aqui es brindar mayor seguridad
+al no dar la contraseña de root a los administradores.
+
+Anidacion de aliases
+Puedes incluir aliases en aliases. Aqui combino dos aliases de usuario dentro
+de un unico alias para los administradores de aplicaciones.
+User_Alias = APPADMINS = DBAs, WEBMASTERS
+
+Convencion en el nombramiento de alias
+Es tradicional, dar los nombres de aliases en letra capital para ayudarlos a di-
+ferenciar de los usuarios, hosts y demas. Y aunque es una entrada valida es mejor
+evitar nombrar aliases de usuarios o hosts. aqui un ejemplo.
+
+User_Alias	MWLUCAS	= mwlucas,pkdick,sbaxter,dwsmith
+Esto podria conducirme rapidamente.
+
+Tambien podrias reusar nombre de alias si ellos son para diferentes tipos de 
+aliases. Por ejemplo, lo siguiente es perfectamente legal, pero perfectamente 
+ofensivo.
+
+User_Alias	DB = dwsmith,kkrusch
+Runas_Alias	DB = _postgresql,www
+Host_Alias	DB = db1,db2,db3
+Cmnd_Alias	DB = /usr/local/bin/pg_*, /home/appowner/bin/*
+DB	DB = (DB) DB
+
+Si haces esto, cualquiera quien deba debug tu configuracion sudo, maldecira
+tu nombre. Este esquema hara que tu celular suene varias veces.
+
+Cambiando el comportamiento por defecto de sudo
+Podemos configurar el comportamiento de sudo, o su comportamiento para ciertos
+usuarios, hosts o aliases, con el campo Defaults. Una caracteristica  son por
+ejemplo los insultos al ingresar la contraseña incorrecta.
+
+$ sudo -l
+Password:
+My pet rat cant type better than you!
+Password:
+
+Al ingresar 3 veces mal la contraseña a sudo, el  cierra.
+
+Para desactivar los insultos incluimos la sgte linea a sudoers.
+Defaults !insults
+
+La declaracion Defaults indica que el sgte item afecta a uno o mas sudo 
+defaults. La opcion insults controla la insultacion al usuario. El caracter
+de exclamasion ! lo niega. Ahora el sistema no insultara.
+
+$ sudo -l
+Password:
+Sorry, try again.
+Password:
+
+Reemplazando Default por host
+Se puede reemplazar los defaults por-host usando el simbolo @ despues de Default
+y darle a ambos host o host alias. Aqui, queremos insultar a usuarios quienes
+no pueden tipar su contraseña en caddis o en una maquina en el alias APPSERVERS,
+mientras se dejan los mensajes deshabilitados para todos los otros servidores.
+
+Defaults !insults
+Defaults@caddis insults
+Defaults@APPSERVERS insults
+
+Reemplazando Defaults por usuario
+Para cambiar sudo defaults por-usuario, usamos % y el usuario o usuario alias.
+
+Defaults !insults
+Defaults%lasnyder insults
+Defaults%DBAs insults
+
+No importa donde lasnyder se loguee - voy a insultarlo, tan bien para usuarios en
+DBA alias. 
+
+Reemplazando Defaults por comando
+Tambien se puede cambiar el comportamiento de sudo por comando poniendo un
+simbolo de exclamacion ! entre Defaults y la lista de comandos.
+
+Defaults !insults
+Defaults!/sbin/newfs,/sbin/fsck insults
+Defaults%APPSCOMMANDS insults
+
+Cualquiera que intente usar newfs o fsck y no pueda tipar su contraseña sera
+insultado.
+
+Reemplazando Defaults por Run as
+Por ultimo, puedes cambiar sudo defaults basado en el comando de se ejecuta como
+(run as). Usamos un < para indicar el cambio de comportamiento para un run as
+alias.
+
+Defaults !insults
+Defaults<_postgresql insults
+Defaults<APPOWNER insults
+
+Si un usuario corre un comando como _postgresql o cualquier otro usuario en
+APPOWNER run as alias, y tipea su contraseña incorrectamente, el sera insultado.
+
+En el resto de este capitulo usaremos Defaults profundamente. Asuma que cada seccion
+incluye el texto "Restrinja esto como sea necesario por usuario, host, command o
+run as".
+
+Sudo y el entorno 
+
+Ciertas variables de entorno pueden causar problemas. Por ejemplo $HOME es una de
+ellas. Un usuario no puede crear archivos en otro directorio home de otros usuarios.
+Otra como LD_LIBRARY_PATH puede causar molestias interminables, asi como problemas
+de seguridad, ya que las aplicaciones tratan de enlazar con bibliotecas equivocadas.
+Sudo puede remover variables de entorno sospechosas, resetear completamente el
+entorno del usuario, o ser configurado para preservar el entorno original del
+usuario. La variable env_reset sudoers es puesta por defecto. Esto limpia todas las
+variables de entorno excepto LOGNAME, SHELL, USER, USERNAME y cualquier cosa que
+inicie con SUDO_. Puedes cambiar este comportamiento deshabilitando env_reset, pero
+I strongly recommend against disabling environment purging.
+
+En lugar de dejar a los usuarios llevar ciegamente la basura al azar en su entorno
+junto con ellos, crear una lista de variables de entorno necesarias y seguras que
+puedan conservar. Veras ejemplos de archivos sudoers en OpenBSD usando la opcion
+keep_env.
+
+Defaults env_keep +="DESTDIR DISTDIR EDITOR FETCH_CMD FLAVOR FTPMODE GROUP MAKE"
+Defaults env_keep +="MAKECONF MULTI_PACKAGES NOMAN OKAY_FILES OWNER PKG_CACHE"
+Defaults env_keep +="PKG_DBDIR PKG_DESTDIR PKG_PATH PKG_TMPDIR PORTSDIR"
+Defaults env_keep +="RELEASEDIR SHARED_ONLY SSH_AUTH_SOCK SUBPACKAGE VISUAL"
+Defaults env_keep +="WRKOBJDIR"
+
+El equipo OpenBSD considera estas variables de entorno seguras para pasar a una
+nueva cuenta de usuario. Si necesitas pasar tu entorno SSH a traves de tus 
+servidores, puedes usar scp y sftp para mover archivos a esos servidores. Crea
+una lista de variables de entorno seguras/aprobadas y agregalas.
+
+Defaults env_keep += "SSH_CLIENT SSH_CONNECTION SSH_TTY SSH_AUTH_SOCK"
+
+La habilidad de copiar archivos a otros servidores deberia ser restringida a
+ciertos grupos.
+
+Usando sudo
+
+Ahora que sabemos como establecer permisos sudo, permitame mostrar como usarlo.
+Tu cuenta sudo justo ahora tiene permisos para correr cualquier comando. La forma
+facil de lograrlo si no es asi, es descomentar la entrada wheel en sudoers, 
+permitiendo a los miembros del wheel acceder a todos los comandos.
+
+%wheel ALL=(ALL) SETENV: ALL
+
+Como usuario de wheel, puedes chequear tus permisos sudo.
+$ sudo -l // Especifica contraseña tuya, no de root.
+Password:
+
+Matching Defaults entries for mwlucas on this host:
+env_keep+="DESTDIR DISTDIR EDITOR FETCH_CMD FLAVOR FTPMODE GROUP MAKE",
+env_keep+="MAKECONF MULTI_PACKAGES NOMAN OKAY_FILES OWNER PKG_CACHE",
+env_keep+="PKG_DBDIR PKG_DESTDIR PKG_PATH PKG_TMPDIR PORTSDIR",
+env_keep+="RELEASEDIR SHARED_ONLY SSH_AUTH_SOCK SUBPACKAGE VISUAL",
+env_keep+=WRKOBJDIR
+User mwlucas may run the following commands on this host:
+(ALL) SETENV: ALL
+
+opcion -l muestra los privilegios y ajustes que tienes. En respuesta sudo
+parsea /etc/sudoers y escupe todas las config que aplican a tu cuenta en este
+sistema. Cualquier limitacion especifica del host es evaluada pero no mostrada.
+
+Sudo password caching
+
+Luego de 5 minutos de haberte logueado sudo recordara este hecho. Luego de otros
+5 minutos sudo pedira reautenticacion. Puedes decirle a sudo que olvide tu
+contraseña cached con sudo -k. Puedes controlar el tiempo que pasa antes de volver
+a solicitar la contraseña de nuevo con timestamp_timeout en sudoers.
+
+Defaults timestamp_timeout 10 // diez minutos
+
+Con timeout a 0, sudo siempre preguntara por una contraseña. Si es < 0 sudo
+almacena la contraseña a lo largo de la sesion. Debes correr sudo -k para olvidar
+que entraste tu contraseña.
+
+Corriendo comandos bajo sudo
+
+$ sudo tcpdump // para correr como root
+
+Se usa ademas tail -f para ver el final de los archivos log y notar las nuevas
+entradas que aparecen. Si algunos solo son accesibles por root, tales como
+authentication log y log se pueden ver haciendo:
+
+$ sudo tail -f /var/log/authlog
+
+Puedes configurar sudoers para permitir cualquier combinacion de comandos y 
+argumentos.
+
+Corriendo comandos como otro usuario
+
+$ sudo -u _postgresql pg_dump
+Si nosotros no tenemos permiso para correr ese comando como ese usuario tendremos
+errores.
+
+sudoedit
+El usuario sbaxter necesita editar el archivo named.conf y nosotros consideramos
+la siguiente norma:
+
+sbaxter		dns1=/etc/rc.d/named,/sbin/mount_nfs,/usr/bin/vi /etc/named.conf
+
+Luce bien no?
+No.
+En primer lugar estoy obligando a sbaxter a usar un editor especifico. vi. Pero
+no quiero forzar a un usuario a usar un editor en especifico. Ademas muchos
+editores ofrecen escapar a shell (vi,emacs) asi que sbaxter podria escapar a una
+shell mientras corre el editor como root, y ganar acceso root. La propiedad
+sudoedit permite al usuario editar archivos especificos con su editor preferido,
+o uno por defecto elegido por el administrador, sin trabajar como root.
+
+sbaxter		dns1=/etc/rc.d/named,/sbin/mount_nfs, \
+		sudoedit /etc/named.conf, /etc/rndc.key
+
+sudoedit es seguido por una lista de archivos que el usuario puede editar, 
+permitiendole a el modificarlos sin privilegios root, lo hace pasandole el nombre
+del archivo a sudoedit.
+
+$ sudoedit /etc/named.conf
+
+sudoedit copia el archivo a un archivo temporal en que el dueño es el usuario,
+y cuando el usuario cierra el editor, este copia el archivo temporal a la
+ubicacion original. El usuario nunca corre el editor como root. sudoedit usa el
+editor dado a variables de entorno $SUDO_EDITOR, $VISUAL o $EDITOR. Usuarios
+pueden establecer esa variable si no quieren que el sistema ofrezca una por ellos.
+
+El gran error de sudo: Exclusiones
+
+Ahora que sabes lo basico de sudo, consideremos algunas configuraciones que
+experimentaron hasta los administradores. En ocaciones quieres prevenir a los
+usuarios de ejecutar comandos especificos pero darles acceso a los otros. La
+documentacion de sudoers dice que puedes usar el simbolo de exclamacion ! como
+caracter de negacion, pero este no es completamente efectivo. Sin embargo sigue
+siendo popular tanto como no quisiera. Demostrare como trabaja y como se puede
+ganar acceso root si lo usas.
+
+Iniciamos definiendo los alias de comando que contienen aquellos comandos
+prohibidos. Uno es su, como tambien las shell de usuario, ya que si ejecutas
+una shell como un usuario, tu te convertiras a ese usuario.
+
+Cmnd_Alias SHELLS = /bin/sh,/bin/csh,/usr/local/bin/tcsh
+Cmnd_Alias SU = /usr/bin/su
+
+Ahora configuramos un alias de comando para excluirlos
+pkdick	ALL = ALL, !SHELLS, !SU
+
+Luce sensible.
+$ sudo sh
+...
+Sorry, user pkdick is not allowed to execute '/usr/bin/su' as root.
+
+Aqui esta la trampa. Comandos estan definidos por su ruta completa. Tu permitiste
+a los usuarios correr cualquier comando excepto para algunos especificados por su
+ruta completa. Todo lo que necesitas es copiar el comando a otra ruta y correrlo.
+
+$ cp /bin/sh /tmp/sh
+$ sudo /tmp/sh
+#
+
+Bienvenido a root.
+
+Sudo logs
+Cada comando sudo es registrado/logged en /var/log/secure por syslogd. Cada mensaje
+log contiene a timestamp, a username, a terminal, the directory where the com-
+mand was run, the user the command was run as, and the command used.
+
+Apr 30 14:16:50 treble sudo: mwlucas : TTY=ttyp8 ; PWD=/home/mwlucas ;
+USER=root ; COMMAND=/usr/bin/su -m
+
+Chequear el archivo secure, puede rastrear quien hizo que y cuando.
+(Send your syslog messages to a logging server that your users cannot access to
+prevent those who screw up from deleting the logs of their screwup.)
+
+May 15 09:14:55 treble sudo: lasnyder : TTY=ttyp4 ; PWD=/etc ; USER=root ;
+COMMAND=/bin/rm pf.conf
+
+Se exactamente quien rompio el sistema y cuando. Esto cambiara lo que esta a
+punto de pasar de homicidio a homicidio justificable. Hace que sudo manejado
+correctamente valga la pena.
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 8 Disco y sistema de archivos
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 11 Repasando TCP/IP
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+Network Layers
+El protocolo de red esta dividido en diferentes capas. Cada capa maneja una
+tarea especifica e interactua solo con la capa inmediatamente superior o
+inferior a esta (teoricamente). El modelo OSI Open Systems Interconnection
+representa la red con siete capas, este modelo cubre cualquier situacion 
+usando cualquier protocolo de red y cualquier aplicacion. Nos limitaremos
+a estudiar el modelo TCP/IP y solo cuatro capas especificas, fisica, datalink,
+red y transporte. Estas cuatro capas cubren todo el internet y casi todas las
+redes corporativas.
+
+The Physical Layer
+Ya sea que se trate de cable de cobre o fibra-optica, o incluso ondas de radio,
+el medio fisico es una capa de la red. Una de las tareas del router es conectar
+una clase de capa fisica a otra. Por ejemplo convertir local Ethernet en
+conexion de fibra OC3. Ademas cada cosa que corre sobre esta es dictado por la
+capa enlace de datos (datalink).
+
+The Datalink Layer
+La capa enlace de datos es la que corre sobre la capa fisica. Este transforma
+la informacion actual en señales que son enviadas sobre la capa fisica,
+usando la apropiada codificacion para el medio fisico, como sigue:
+
++ Ambos Ethernet y Switched Multimegabit Data Service (SMDS) usa direcciones
+Media Access Control (MAC) y el protocolo Address Resolution Protocol (ARP).
++ IPv6 sobre Ethernet usa Neighbor Discovery (ND).
++ Diap-up y WANs usa ya sea Point-to-Point Protocol (PPP) o HighLevel Data Link
+Control (HDLC).
+
+OpenBSD soporta otros protocolos de enlace de datos, si es uno inusual verifica
+en verifica que sea soportado. Algunas capas de enlace han sido implementados
+sobre diferentes capas fisicas, por ejemplo, Ethernet ha sido implementado sobre
+twinax, coax, CAT3,5,6,7, fibra-optica y ondas de radio. Con los minimos cambios
+a los device drivers, la capa de enlace puede direccionar cualquier clase de
+capa fisica. Esta es una de las formas en que las capas simplifican la red.
+
+La capa de enlace intercambia informacion con la capa fisica y la capa de red.
+
+The Network Layer
+Es la parte que mapea la conectividad entre los nodos la red, respondiendo 
+preguntas como donde esta el otro host? y puedo llegar alla desde aqui?.
+Este protocolo logico provee una interfaz consistente para que los programas
+corran sobre la red sin importar como la capa de enlace de datos y fisica
+luzcan.
+
+La capa de red utilizada en Internet es el protocolo de internet IP, ambas
+IPv4 y IPv6 provee a cada host con una unica direccion IP, asi que otro
+host en la red pueda encontrarlo. Direcciones de red IPv4 se traducen en
+una gran cantidad de reglas de "direcciones unicas", pero la red todavia tiene
+una unica direccion IP en algun lugar. La capa de red habla con la capa de
+enlace de datos abajo y la capa de transporte arriba.
+
+The Transport Layer
+Es donde fluyen los datos reales. Los tres protocolos mas comunes son el 
+Internet Control Message Protocol ICMP, Transmission Control Protocol TCP y
+User Datagram Protocol UDP. ICMP pasa mensajes de conectividad basicos entre
+hosts con direcciones IP. Si IP provee una ruta y direcciones, ICMP provee
+luces de trafico (semaforos) y señales de salida. La mayoria de veces ICMP
+corre silenciosamente en segundo plano. UDP y TCP son los protocolos que
+transportan los datos reales entre los hosts. UDP es un protocolo de
+transporte de puro hueso, ofreciendo los minimos servicios para transferir
+datos sobre la red. El archivo /etc/protocols contiene una lista de protocolos
+de transporte construidos sobre IP. Este no incluye ningun protocolo no-IP
+como IPX/SPX o DECnet.
+El archivo define el nombre oficial, un numero asociado y algunos aliases.
+ICMP, TCP, UDP son diferentes cuando corren sobre IPv4 vs IPv6. Cada protocolo
+tiene claramente campos definidos en la cabecera del paquete IP, dejando un
+numero especifico de bits para cosas como checksums, direccion de destino, asi.
+No puedes correr un protocolo de transporte sobre un protocolo de red
+incompatible. TCPv6 sobre IPv4 no funciona.
+La capa de aplicacion esta arriba, ellas solo se comunican con el protocolo de
+transporte y el usuario. Las otras tres capas estan internamente en las 
+aplicaciones.
+
+Network Stacks
+Una pila de red es el software que permite a un host comunicarse con la red.
+Se puede elegir la pila IPv4, la pila IPv6 una configuracion dual. Las pilas
+se comunican sobre los protocolos IP de su misma version. La configuracion
+mas adecuada es dual-stack, el host intenta usar ambas, prefiriendo una sobre
+otra. Se recomienda preferir la pila que tenga mejor conectividad. No se 
+necesita nada especial en OpenBSD para habilitar IPv6, tan solo una direccion
+IPv6, un router por defecto, un servidor DNS e iras lejos.
+
+IPv4 Addresses and subnets
+Una direccion IP es un unico numero de 32-bit asignado a un nodo especifico
+de la red. Algunos seran estaticos (servidores) otros no tanto (escritorio).
+En lugar de expresarse en un unico numero, este es dividido en cuatro numeros
+de 8-bit expresado en decimales. Los proveedores de servicios de internet (ISP)
+emiten las direcciones IP en bloques. Estos bloques son pequeñas locaciones
+de 16 a 32 direcciones. Si el sistema es una granja de servidores tu obtendras
+un par de direcciones fuera del bloque de 256. Una mascara de red representa
+el tamaño del bloque de direcciones IP asignadas a tu red local. El tamaño de
+tu bloque IP determina tu mascara - o tu mascara determina cuantas direcciones
+IP tiene la red. Los ISP emiten las direcciones IP con su prefijo de tamaño.
+Por ejemplo 192.0.2.128/26. La direccion 255.255.255.0 se corresponde con un
+bloque de 256 direcciones IP. La mascara tambien referida como /24. El numero
+despues del slash / es el numero de bits fijos en la mascara de red. De una
+direccion IPv4 de 32bits un /24 significa que 24 bits nunca cambiaran.
+
+Los bits que nunca cambiaran siempre estaran situados al costado izquierdo,
+dejandonos el resto para nuestro uso. Tradicionalmente los bloques de red
+estan divididos por bloques de 8bits pero no es la norma, asi que una mascara
+de /25 bits es posible, 1 bit mas que la clase C de 24bits. Esta mascara
+estaria representada con 11111111.11111111.11111111.10000000 dejandonos 7
+bits para jugar. Los primeros tres bloques en decimal serian 255 y el ultimo
+bloque 10000000 seria 128, asi que nuestra mascara de red seria 255.255.255.128.
+Y curiosamente son 128 posibles direcciones IP que podremos usar. Ya que
+256-128=128.
+
+Es comun ver direcciones IP de hosts con mascaras de red, tal como 192.0.2.130/26
+Esto nos da todo lo necesario para conocer la red en que se encuentra el host.
+El gateway normalmente estara en los extremos de las direcciones de este bloque.
+
+Si tenemos la direccion 192.0.2.251/26 en ella habran 8 16 24+2=26 bits fijos
+dejandonos 6 para tratar, es decir 2^6 = 64 posibles direcciones IP.
+Y la mascara estaria conformada de la siguiente manera 255.255.255.192
+256-2^6=192.
+
+Tabla11-1 Pag 190
+Pre Mascara Hexa Masc   IPs disponibles
+/24 ...0    0xffffff00  256  
+/25 ...128  0xffffff80  128
+/26 ...192  0xffffffc0  64
+/27 ...224  0xffffffe0  32
+/28 ...240  0xfffffff0  16
+/29 ...248  0xfffffff8  8
+/30 ...252  0xfffffffc  4
+/31 ...254  0xfffffffe  2
+Una aplicacion que ayudara en los calculos es ipcalc.
+
+Viewing IPv4 Addresses
+
+$ ifconfig fxp0
+...
+    inet 192.0.2.226 netmask 0xfffffff0 broadcast 192.0.2.239
+    inet 192.0.2.231 netmask 0xffffffff
+...
+Las lineas que inician con inet son direcciones IPv6. Esta interface tiene la
+direccion primaria IPv4 de 192.0.2.226 y una secundaria, o alias 192.0.2.231.
+Puedes ver la mascara de cada direccion y la direccion de broadcast para la 
+subred.
+
+Unusable IPv4 Addresses
+Cada bloque de direcciones IPv4 reserva su primera y ultima direccion IP para
+uso por la red.
+
+La primera direccion IP en un bloque es la direccion de red, usada para separar 
+redes (Y en sistemas BSD, la direccion de broadcast) en una red /24, esta 
+deberia ser una direccion finalizando en 0.
+
+La ultima direccion IP en el bloque es la direccion de broadcast. En una red /24
+la direccion de broadcast finaliza en .255. 
+
+Tu no puedes asignar la primera o la ultima direccion en una red a un dispositivo
+sin arriesgar la estabilidad de la red.
+
+Direcciones especiales IPv4
+Hay unos pocos bloques de direcciones IPv4 asignados a propositos especificos,
+aunque no es necesario saber todos, hay dos grupos que se veran muy a menudo,
+para una lista completa de subredes IPv4 reservadas ver RFC 5735 y 6598.
+
+Localhost
+Direccion 127.0.0.1/8 estÃ¡ asignada a localhost, una direccion de maquina para
+si misma (interfaz loopback). Paquetes para o desde 127.0.0.1/8 nunca deberian
+cruzar la red, del mismo modo, los demonios asociados a 127.0.0.1/8 pueden ser
+accedidos solo en la maquina local.
+
+Redes privadas
+El estandar de internet RFC 1918 establece tres redes para usar en redes privadas
+y detras de dispositivos de traduccion de direcciones de red (NAT): 10.0.0.0/8,
+172.16.0.0/12 y 192.168.0.0/16. Mientras que las direcciones publicas deben ser
+tratadas por un ISP, cualquiera puede usar las direcciones de estos tres bloques
+siempre y cuando aquellos hosts no esten expuestos a internet directamente. Si
+tienes una red con hosts que no tienen acceso a internet, o si tu provees acceso
+a internet a traves de un servidor proxy o NAT, tu puedes usar una red RFC 1918.
+
+Trampas del direccionamiento IPv4
+El sentido comun dicta un solo equipo, una sola interfaz de red, una sola
+direccion IP.
+No siempre, algunas interfaces de proposito especial (tales como aquellos 
+dedicados al packet sniffing) funcionan de la forma prevista sin una
+direccion IP, y cualquier sistema operativo permitira asignar multiples direcciones
+IP a una interfaz de red a traves del proceso llamado aliasing. Tambien puedes
+enlazar multiples tarjetas fisicas a una interfaz de red, dandole al equipo una
+gran interfaz virtual. Es bueno tenerlo en cuenta aunque no te encontraras con
+esto diariamente.
+
+IPv6 Direcciones y subredes
+IPV4 ofrece 4294 millones de direcciones, menos que una direccion por cada ser
+humano. Aunque no se han agotado todavia, es un recurso cada vez mas escaso.
+Asignaciones generosas, junto con grandes trozos de direcciones reservadas para
+propositos especiales han acelerado su agotamiento. Lentamente nos cambiamos a
+IPv6.
+
+IPv6
+IPv6 usa direcciones de 128bits, expresados como seis grupos de cuatro caracteres
+hexadecimales separados por dospuntos : (2001:db8:0:bad:c0de:cafe). Un espacio de
+direcciones de 128bits es suficiente para que cada atomo en la tierra tenga mas de
+10 direcciones IP. TCP,UDP,ICMP y otros protocolos corren encima de este. IPv6
+tiene su propia capa 2 de protocolo, Neighbor Discovery, el cual reemplaza
+protocolos como Ethernet ARP.
+Todo es casi igual a como venias trabajando para IPv4, usas una direccion IP, un
+gateway por defecto, routers y su tabla de enrutamiento y puedes casi en todos los
+casos sustituir una direccion IPv4 en una IPv6 y ver que todo trabaja. Un servidor
+web no toma cuidado de si este esta enlazado al puerto 80 sobre 192.0.2.13 o sobre
+2001:db8:0:bad:c0de:cafe. El servidor debe ser capaz de tratar con conexiones desde
+ambas direcciones.
+
+Entendiendo las direcciones IPv6
+Las direcciones IPv6 son expresadas con seis grupos de cuatro caracteres
+hexadecimales separados por dospuntos. Tal como en IPv4 nos deshacemos de
+los ceros a la izquierda, es decir 192.0.2.13 en vez de 192.000.002.013.
+Ocurre igual para IPv6 en vez de 2001:db8:0000:0bad:c0de:cafe podemos usar
+2001:db8:0:bad:c0de:cafe. IPv6 tienen a menudo largas cadenas de ceros. Esto
+tiene que ver con las subredes. Pero lo que debemos saber, es que una cadena
+de ceros consecutivos se puede reemplazar con :: (doble dospuntos). Es decir
+2600:0:0:0:0:aaaa en 2600::aaaa. Esto lo puedes hacer solo una vez por 
+direccion. Algo que resulta en error es hacer esta simplificacion en 
+direcciones como 2600::1::1 porque es ambiguo y podria representar tanto
+2600:0:0:1:0:1 o 2600:0:1:0:0:1, y no sabre cual es y tampoco el servidor.
+Finalmente en muchos casos las direcciones tendran asociadas un puerto, para
+evitar confuciones de si es parte de la direccion IPv6 o el puerto debemos
+encerrar la direccion en corchetes. Como [2001:db8::bad:c0de:cafe]:80.
+
+Viendo direcciones IPv6
+$ ifconfig fxp0
+...
+    inet 192.0.2.13 netmask 0xfffffff0 broadcast 198.0.2.255
+    inet6 fe80::bad:c0de:cafe%fxp0 prefixlen 64 scopeid 0x2
+    inet6 2001:db8::bad:c0de:cafe prefixlen 64 autoconf pltime 604399 vltime 2591599
+...
+
+Las lineas iniciando con inet6 son direcciones IPv6. Esta interfaz ha sido
+asignada a dos direcciones IPv6 fe80::bad:c0de:cafe%fxp0 y
+2001:db8:bad:c0de:cafe. De donde vino %fxp0? Esto lo sabras en "Direcciones de
+enlace local" mas abajo.
+
+Subredes IPv6
+A diferencia de IPv4 donde estableces una subred en cualquier bit, en IPv6
+usualmente se hace en los limites de los dospuntos. Los dospuntos aparecen
+cada 16 bits, asi que las subredes naturalmente son /16 /32 /48 y /64. Aunque
+el estandar IPv6 recomienda usar /64 como la red mas pequeña posible, muchos
+utilizan redes de /80, /96, y /112 para propositos especiales. (Tambien se ha
+visto usar subredes no divididas en los limites de 16bits. Lo que no cubriremos
+aqui, pero no te impresiones al encontrar /51). Las subredes de IPv6 son siempre
+expresadas con un slash / conocido como prefijo de tamaño, asi que no veremos
+una mascara de ffff:ffff:ffff:ffff::, como en IPv4.
+Los ISP tratan normalmente con subredes de /32, /48 y se espera que dejen a sus
+usuarios finales una red de /64 bits. 2^64 direcciones.
+Cuando se establecen subredes de 16bits cada red tiene 65536 subredes de la
+siguiente mas pequeña. Una de /32 contiene 65,536 /48 redes, y una de /48 
+contiene 65,536 /64 redes.
+
+Direcciones especiales de IPv6
+Como su predecesor IPv6 reserva algunos bloques de direcciones.
+
+Localhost
+La direccion de localhost en ::1/128 trabaja como 127.0.0.1 en IPv4. Esta
+siempre se refiere a la maquina local. En OpenBSD ::1/128 es siempre asignada
+a la interface lo0.
+
+Direcciones de enlace local
+Direcciones que inician con fe8x (donde x es una variable) son locales a su
+interfaz. Cada enlace tiene una direccion de enlace local que es valida solo
+en una red local especifica. Incluso si una red IPv6 no tiene router, el host
+local atado a una red puede encontrar a cada otro y comunicarse usando las
+direcciones locales. Estas redes son siempre subredes de /64. Tu veras subredes
+Iá¹”v6 identicas en otras interfaces y en otras redes completamente desconectadas
+de tu red, y eso esta bien. Estas direcciones son locales a el enlace. Por
+ejemplo, aqui la direccion de enlace local en una maquina OpenBSD.
+
+inet6 fe80::bad:c0de:cafe%fxp0 prefixlen 64 scopeid 0x2
+
+La direccion de enlace local de esta interfaz es fe80::bad:code:cafe.
+%fxp0 indica que esta direccion es local a la interfaz fxp0 y no es usable
+en cualquier otra interfaz en la maquina. Si tu maquina tiene una interfaz
+fxp1, y un host en esa red intenta alcanzar la direccion fe80::bad:code:cafe,
+esta maquina no respondera. Esta direccion particular es valida solo para la
+red atada a la interfaz fxp0.
+Debes notar que las direcciones de enlace local tiene una seccion en comun con 
+una direccion IPv6 publica en esta red. Eso es porque una IPv6 autoconfigurada
+es usualmente calculada desde la direccion de interfaz fisica; Esto no importa
+si la direccion autoconfigurada es una direccion publica o una direccion de
+enlace local.
+
+Asignando direcciones IPv6
+Clientes de IPv6 pueden usualmente usar autoconfiguracion a traves de
+router discovery, un protocolo IPv6 donde los routers anuncian su presencia
+en la red y legitimizan direcciones a los clientes. Desafortunadamente,
+IPv6 no soporta opciones comunes DHCP Dynamic Host Configuration Protocol,
+tales como asignacion de un DNS Domain Name Service. Si tienes configurado
+un servidor DNS - Incluso servidores IPv4 accesibles en un host dual-stacked -
+la autoconfiguracion trabaja bien. Si corres una red solo IPv6, tu debes
+ya sea establecer un servidor DHCP IPv6 para proveer informacion DNS a los
+clientes o configurar el servidor DNS manualmente.
+Los servidores no deberian usar autoconfiguracion IPv6, los servidores
+normalmente necesitan una direccion estatica. Similarmente para los routers
+no pueden usar una autoconfiguracion. Si un host puede enviar/reenviar 
+paquetes, este requiere una direccion IPv6 estatica.
+Puedes asignar multiples direcciones IPv6 a una interfaz usando aliases, tal
+como IPv4.
+En IPv6, un cliente en una red /64 puede usar autoconfiguracion.
+La autoconfiguracion IPv6 se parece a un servicio DHCP despojado/minimo.
+El router difunde informacion de subred y gateway, y los hosts se configuran
+a si mismos para usarlos. Hosts en una red mas pequeña que /64 deben ser
+manualmente configurados.
+
+TCP/IP
+Aunque TCP e IP son protocolos en diferentes capas, estan tan estrechamente
+entrelazados que normalmente son referidos como una misma entidad.
+
+ICMP
+Es usado para transmitir mensajes de disponibilidad y enrutamiento a traves
+de la red. Herramientas como ping, traceroute usan ICMP. Este incluye toda
+clase de diferentes protocolos y herramientas.
+Mientras algunas personas reclaman que ICMP debe ser bloqueado por razones de
+seguridad, aquellas personas no entienden que ICMP es solo un variado tal como
+TCP o UDP. Redes IPv4 con rendimiento adecuado requieren largos trozos de ICMPv4.
+Si debes bloquear ICMPv4 por razones de seguridad, hazlo de forma selectiva.
+Por ejemplo, bloquear la fuente de los mensajes, se rompe la ruta de unidad
+de transmision maxima MTU en el descubrimiento, lo cual nos conduce a un mundo
+de dolor. Si no entiendes esto ultimo no bloquees ICMPv4.
+IPv6 muere sin ICMPv6, ya que IPv6 no soporta fragmentacion de paquetes, asi
+que nunca bloquees ICMPv6.
+
+UDP
+Es el protocolo mas puro-hueso de transferencia de datos que correo sobre IP.
+Este no ofrece manejo de errores, minima verificacion de integridad, y ninguna
+defensa en absoluto para los datos perdidos. El protocolo de transporte 
+considera cada paquete UDP completamente autonomo. No hay chequeo de coherencia
+de datos en la capa del protocolo. A pesar de estos inconvenientes, UDP puede
+ser una buena eleccion para cierta clase de transferencias de datos, y muchos
+servicios de internet confian en el. UDP es tambien un protocolo de datagramas,
+lo que significa que cada transmision en la red es completa y autonoma, y se
+recibe como una sola unidad integral. Mientras la aplicacion podria no 
+considerar un solo paquete UDP como una peticion completa, la red lo hace.
+
+Cuando un host transmite datos via UDP, no hay forma de saber si los datos
+alcanzaron su destino. Programas que reciben datos UDP solo escuchan en la red
+y aceptan cualquier cosa que llegue. Cuando un programa recibe datos via UDP,
+este no verifica la fuente de esos datos. Aunque cada paquete UDP incluye una
+direccion fuente, esta direccion es facilmente facilficada. Cada paquete UDP
+incluye un checksum para el paquete, pero no hay chequeo de integridad para la
+secuencia de datos como un todo. Esto es el por que UDP es llamado sin-conexion
+connectionless o sin-estado stateless.
+
+Sin chequeo de integridad, sin garantia en contra de perdida de datos, potencial
+para paquetes falsificados - todo suena mal, asi por que usar UDP?.
+Aplicaciones basadas en UDP a menudo tienen sus propios metodos de correccion de
+errores o de otra forma no encajarian bien con protocolos mas confiables como
+TCP. Por ejemplo una simple consulta DNS deberia tener una tiempo de espera de
+unos pocos segundos o los usuarios enloquecerian. Las conexiones TCP tienen un
+tiempo de espera de hasta dos minutos. DNS requiere fallos rapidos y un solo
+paquete por transmision, el cual hace a UDP una mejor opcion que TCP para 
+simples consultas DNS. Servicios de streaming en tiempo real, tales como video, 
+tambien usan UDP. Despues de todo, si unos cuantos pixeles se pierden durante la 
+transmision del video no querras esos pixeles un minuto mas tarde. La mayoria de
+aplicaciones basadas en UDP lo usan por razones similares.
+
+Debido a que UDP no retorna nada cuando te conectas a un puerto, no hay forma
+confiable de testear si un puerto UDP es alcanzable (aunque herramientas como
+nmap intenta hacer eso). Si quieres un protocolo que responda a la capa de red
+mira TCP.
+
+TCP incluye algunas caracteristicas adicionales, tales como recuperacion y 
+correccion de errores. El receptor debe reconocer cada paquete que este recibe,
+el emisor retransmite cualquier paquete no reconocido. A diferencia de UDP, 
+las aplicaciones que usan TCP pueden esperar la transmision de datos confiables.
+Esto hace al protocolo TCP orientado a conexion o stateful.
+TCP tambien es un protocolo de flujo streaming protocol, lo que significa que
+una unica peticion puede ser dividida en multiples paquetes de red. Mientras el
+emisor transmite multiples trozos de datos uno despues de otro, esos datos 
+podrian llegar fueran de orden o fragmentados. El receptor debe rastrear estos
+trozos y ensamblarlos apropiadamente para completar la transaccion de la red.
+Para que los hosts intercambien datos a traves de TCP, ellos deben establecer
+un canal para que los datos fluyan a traves de ella. Un host solicita una
+conexion, el otro host responde a esa peticion, y luego el primer host inicia la
+transmision. Esa configuracion o forma de proceder se conoce como three-way
+handshake. Similarmente cuando una conexion es completada, los sistemas deben
+hacer cierto trabajo para derribar las conexiones.
+Para comprobar si un puerto esta abierto, puedes usar telnet o nc para 
+conectarse a ese puerto. Aqui, nos conectamos al puerto 22 en el host caddis.
+
+$ telnet caddis 22
+Trying 192.0.2.35
+Connected to caddis
+Escape character is '^]'.
+SSH-2.0-OpenSSH_6.0
+^]
+telnet> c
+Connection closed.
+
+Vemos informacion desplegada por el puerto. Usamos el caracter ^] para
+desconectarnos y c para cerrar telnet. TCP es comunmente usado por aplicaciones
+adaptadas a sus tiempos de espera y caracteristicas de transmision, tales como
+correos, clientes FTP y navegadores.
+
+How protocols fit together
+Tu puedes comparar la pila de red al igual que una cena con tu familia. La capa
+de enlace de datos (ARP en el caso de Ethernet) permite ver a cada uno en la
+mesa. IP le da a cada persona una unica silla en la mesa (excepto para los
+gemelos usando un banco de piano NAT). ICMP provee informacion basica de la
+capa baja tal como "El camino mas rapido a las patatas es que el tio Mike las
+pase" o "la tia Liz no puede levantar el plato de jamon". TCP es donde tu das la
+mantequilla a alguien y la otra persona debe decir gracias antes de que la dejes
+ir. UDP es como tossing a roll at Grandma Lucas; she might catch it or it might
+bounce off her forehead.
+
+Transport protocol ports
+Los puertos del protocolo de transporte permite a un servidor servir muchos
+servicios diferentes sobre un protocolo de transporte, multiplexando conexiones
+entre maquinas. Cuando un servidor de red inicia, este ata, o enlaza, uno o mas
+puertos logicos. Un puerto logico es solo un numero arbitrario desde 0 a 65536,
+aunque nadie usa el puerto 0. Por ejemplo los servidores de correo de internet
+a menudo usan el puerto 25.
+Cada paquete TCP o UDP que llega a un sistema arrastra un campo que contiene el
+numero de puerto destino deseado. Si un paquete entrante pregunta por el puerto
+25, este es conectado al servidor de correo que corre en ese puerto. Esto 
+significa que los otros programas corren en otros puertos, los clientes pueden
+hablar con aquellos diferentes puertos, y no estar confundidos.
+Note que la asignacion de puertos no tiene un orden fisico constante, en su 
+lugar solo se ha convenido. No hay razon para que el servicio de correo deba
+correr sobre el puerto 25 mas que el hecho de que todos han estado de acuerdo de
+que asi deberia. Si alguien intenta enviar un correo, su servidor de correo se
+conectara automaticamente al puerto 25 en su servidor. Si alguien corre un
+correo en el puerto 80 y tiene un servidor web en el puerto 25, tu nunca tendras
+tu correo y tu servidor web no tendra mucho trafico.
+
+El archivo /etc/services contiene una lista de numeros de puertos y servicios
+asociados. El archivo tiene un formato de cinco columnas. El primer campo es el
+nombre de servicio asignado al puerto, numero, denominacion y algun comentario.
+El protocolo HTTP usado en la web corre sobre TCP.
+
+www 80/tcp http # WorldWideWeb
+www 80/udp	# HyperText Transfer Protocol
+
+Es necesario saber que dos servicios pueden funcionar bajo un mismo puerto pero
+corren en diferente protocolo. Por ejemlo el servicio syslog corre en el puerto
+514 via UDP, y el protoco de impresion lpr corre en el puerto 514 sobre TCP.
+Algunos programas de servidor leen /etc/services para aprender a cual puerto
+enlazar en el inicio, y muchos clientes lo leen para aprender a que puerto 
+deberian intentar conectarse.
+Como todos los estandar, hay veces en las que querrias quebrar las normas. El
+demonio SSH sshd corre normalmente sobre el puerto 22/TCP, pero he corrido este
+sobre el puerto 23 (telnet), 80 (www), 443 (https) y otros para evadir ingenuos
+firewalls filtradores de paquetes. Tu encontraras las razones para romper los
+estandares. Eso esta bien, siempre y cuando entiendas lo que estas haciendo
+y como afecta a los otros.
+
+Reserved ports
+Puertos por debajo de 1024 en ambos TCP y UDP pueden ser abiertos solo por el
+usuario root. Estos puertos son asignados (mayormente) a los protocolos nucleo
+de la infraestructura de internet, tales como DNS,SSH,HTTP,LDAP etc. Servicios
+que solo unos pocos hosts seleccionados en cada red deberian ofrecer. Solo
+programas con privilegios de nivel root pueden enlazar a puertos reservados.
+La asignacion de puertos a estos protocolos es generalmente permanente y si
+quieres interoperar con otros sitios, no deberias cambiarlos.
+El software OpenBSD enlaza a los puertos reservados como root y luego arrastra
+los privilegios, cumpliendo el resto de las funciones como un usuario no
+privilegiado.
+Si corres un servicio que enlaza a un puerto reservado y este puede correr solo
+como root, considera si realmente lo necesitas. Intenta encontrar un servidor
+alternativo que haga la separacion de privilegios. Si no puedes, al menos
+instala ese servicio en una maquina dedicada para reducir su amenaza a otros
+servicios en la red.
+
+Which ports are open?
+Los servicios de red estan disponibles via puertos TCP o UDP. Los programas
+se enlazan a puertos para ofrecer servicios. De este enlace surgen dos
+preguntas. Cuales puertos estan abiertos y que programas estan escuchando en
+cada puerto. Esas preguntas se pueden responder con netstat y fstat.
+
+Usando netstat
+Provee visibilidad general en la pila de red. Se usa netstat para chequear la
+tabla de enrutamiento, examinar puertos abiertos, ver como los paquetes estan
+atravesando las interfaces, etc.
+Cuando se este mirando informacion de la red, recomiendo desactivar la
+informacion DNS a traves de -n. Puedes en todo caso hacerlo con ello, pero
+agregar consultas DNS puede algunas veces sesgar la informacion que estes
+viendo y en la mayoria de los casos hacer mas lento el comando.
+La opcion -f permite elegir una familia de protocolos a revisar. -f inet para
+sockets IPv4 y -f inet6 para IPv6. Finalmente -a dice a netstat que muestre
+todos los sockets abiertos por cualquier proceso, en lugar de solo los del
+usuario.
+
+$ netstat -na -f inet
+Active Internet connections (including servers)
+Proto   Recv-Q  Send-Q  Local Address   Foreign Adress  state
+tcp         0       0   192.0.2.135.22  192.0.2.8.49997 Established
+tcp         0       0   127.0.0.1.587   *.*             Listen
+tcp         0       0   *.22            *.*             Listen
+udp         0       0   127.0.0.1.512   *.*
+
+La lista inicia con los puertos TCP abiertos. Las columnas Recv-Q y Send-Q
+muestran el numero de bytes que el sistema esta en proceso de recibir o enviar.
+La columna Local Address muestra la direccion IP atada a la maquina local donde
+el socket esta escuchando. Por lo general un servicio se enlaza a un puerto
+en una sola direccion en una maquina. Si el puerto es parte de una conexion
+actual, la direccion IP es siguida por el numero del puerto como en
+192.0.2.135.22, donde la conexion tcp esta atada al puerto 22, reservado para
+SSH. Asi que probablemente exista una conexion ssh.
+Si Local Address es un asterisco seguido por un numero de puerto, es un enlace
+comodin. Un programa se ha enlazado a este puerto, y ha pedido al kernel
+calcular la direccion IP. Es probablemente (pero no necesariamente) un socket
+escuchando.
+La columna Foreign Address muestra la direccion IP y puerto del host remoto
+involucrado en una conexion. Si hay una direccion foranea mostrada, esta
+siempre incluye el puerto. Si se muestran dos asteriscos *.*, significa que el
+servicio esta esperando para una conexion en el puerto local.
+La columna state aplica solo a conexiones TCP. Una conexion TCP viva y 
+trabajando esta en estado ESTABLISHED. Otros estados como (SYN_RCVD, ACK y
+SYN+ACK) son todos parte de la creacion de una conexion, mientras LAST_ACK,
+FIN_WAIT_1 y FIN_WAIT_2 significan que la conexion se esta cerrando.
+LISTEN significa que el socket esta esperando por una conexion entrante.
+Los puertos UDP tienen su propia seccion. Deberias ver host remotos para
+protocolos de larga ejecucion como NFS y NTP. UDP es sin estado, asi que nunca
+veras un estado en una conexion UDP.
+Si estas interesado en solo sockets TCP o UDP, puedes usar la opcion -p para
+mostrar un protocolo en particular.
+
+$ netstat -na -p tcp
+tcp ...
+tcp6 ...
+tcp ...
+
+Se muestran ambos servicios y conexiones sobre la familia de direcciones IPv4 e 
+IPv6. Es enteramente posible tener un servicio corriendo en una familia de 
+direcciones y no en otra. Muchos de mis sistemas escuchan conexiones SSH solo
+en IPv6; Esto por ahora me oculta de scanners de puertos y gusanos.
+
+En lugar de listar cada servicio esperando por una conexion entrante, puedes
+ver solo las establecidas borrando la opcion -a.
+
+$ netstat -np tcp
+tcp ... ESTABLISHED
+
+Usando fstat
+Ahora que sabes cuales puertos TCP y UDP estan abiertos, como saber que 
+programas estan escuchando en ellos? fstat es un programa que muestra todos los
+archivos y sockets abiertos en el sistema. Conexiones de red son sockets 
+abiertos. El comando puede generar cientos de lineas de salida, una por cada
+archivo abierto por cualquier proceso. Por ahora queremos saber cuales 
+programas estan manejando sockets de red abiertos. La cadena internet indica
+sockets de red.
+
+$ fstat | grep internet
+mwlucas sshd     21403 3* internet stream tcp 0xd5365994 192.0.2.235:22 <-- 192.0.2.8:49997
+root    sendmail 19063 4* internet stream tcp 0xd537e330 127.0.0.1:25
+root    sendmail 19063 5* internet6 stream tcp 0xd537e4c8 [::1]:25
+root    sendmail 19063 6* internet stream tcp 0xd537e660 127.0.0.1:587
+root    sendmail 19063 7* internet6 stream tcp 0xd537e7f8 [::1]:587
+root    sshd     29561 3* internet6 stream tcp 0xd537e000 *:22
+root    sshd     29561 4* internet stream tcp 0xd537e198 *:22
+_syslogd syslogd 12885 4* internet dgram udp *:514
+
+Ves un proceso sshd propiedad de mwlucas. Ese es un proceso no privilegiado,
+atado a una sesion SSH. Mas abajo ves un demonio SSH propiedad de root
+escuchando en la red. Cuando una peticion de conexion arrive, el root 
+propietario del demonio dara este a un proceso hijo no privilegiado. Ademas
+tambien hay una variedad de procesos sendmail escuchando en la red.
+Este sistema corre los servidores SSH y email esperados, y nada en puertos
+raros.
+Entre netstat y fstat podriamos darnos una buena idea de lo que el sistema
+esta haciendo en la red a cualquier hora.
+
+IP Routing
+La mayoria de administradores no necesitan saber mucho acerca del enrutamiento
+IP, porque la mayoria de servidores tienen solo una interfaz de red y un
+gateway por defecto. El administrador te da una direccion IPv4 y una ruta por
+defecto, que se pone en los archivos de configuracion apropiados y tu estaras
+enrutado. No necesitaras eso para la mayoria de hosts IPv6, ya que la
+autoconfiguracion hace esas cosas magicamente. Servidores necesitaran una IPv6
+estatica y una ruta por defecto.
+Algunos servidores tienen multiples interfaces, tal como uno para el gateway
+por defecto y otro para un grupo de aplicaciones relacionadas o servidores de
+backup. Los sistemas OpenBSD frecuentemente terminan en la infraestructura de
+la red, o sentados en zonas desmilitarizadas (DMZ) donde el servidor debe tomar
+desiciones de enrutamiento. Si tu utilizas OpenBSD en ese entorno, o como
+firewall, debes entender el enrutamiento.
+El enrutamiento es simplemente decidir donde enviar los paquetes. Si tu sistema
+esta atado a una red, este no necesita tomar todas las decisiones; este solo
+envia los paquetes a esa red. Tu sistema en 192.0.2.0/24 sabe como alcanzar
+cualquier direccion IP que inicie con 192.0.2. Y si se desea enviar un paquete
+fuera de esa red?. La mayoria de los equipos usan una ruta por defecto, el cual
+es una direccion IP en la red local donde se envian todos los paquetes
+destinados a direcciones no locales. Es muy comun que un router o firewall
+provea todo el acceso a la red. Este dispositivo tiene probablemente una ruta
+por defecto que apunta a tu ISP, el cual maneja decisiones de enrutamiento mas
+complejas.
+En otros casos, tendras un protocolo de enrutamiento dinamico corriendo en tu
+red. Si usas Open Shortest Path First (OSPF), Border Gateway Protocol (BGP) o
+Routing Information Protocol (RIP), OpenBSD tiene demonios especificos para la
+integracion de estos protocolos. Lo que veremos es una introduccion media entre
+el enrutamiento dinamico y simples rutas por defecto.
+El enrutamiento en IPv6 es igual al IPv4 solo que con mas dos puntos.
+
+IPv4 Routed network example
+Si una red tiene multiples pasarelas conduciendo a diferentes redes, los hosts
+en la red deben tomar decisiones de enrutamiento. Supongamos que tu red tiene
+multiples enrutadores atadas a este, cada llendo a diferentes redes. Las
+maquinas en tu red deciden donde enviar los paquetes. Un ejemplo comun es un
+doble-firewall.
+
+Internet -- 192.0.2.1 -- {DMZ 192.0.2.0/25} -- 192.0.2.2 -- {Interna 192.0.2.128/25}
+
+En este diseño, los hosts deben transitar una DMZ antes de entrar a Internet
+o del Internet a la red interna. Hay otros diseños como hub-and-spoke model.
+Pero en este caso se necesita enrutamiento.
+El firewall externo provee una capa de proteccion. Este permite solo trafico
+expresamente juzgado como necesario. Lo hace, sin embargo permite conexiones
+entrantes a hosts en DMZ. Los hosts en la DMZ son hasta cierto punto vulnerables.
+Ellos no son lo suficiente confiables para estar en la red interna. Tu sistema
+de deteccion de intrusos o tus servidores web deben alojarse aqui.
+El firewall interno, tal como el interno, permite solo trafico juzgado como
+necesario para los propositos de la organizacion. Es posible que no se permite
+ninguna conexion desde afuera, sin embargo, tampoco confia en los hosts de
+DMZ.
+Solo hosts altamente confiables son permitidos en la red interna. Aqui es donde
+la organizacion mantiene sus apreciados datos, tales como registros financieros,
+bases de datos de clientes y colecciones de peliculas.
+Muchos de los hosts en esta red necesitan tomar decisiones de enrutamiento muy
+simples. Cualquier cosa en la red interna tiene solo una forma de alcanzar
+cualquier cosa, y cualquier host en Internet tiene solo una forma de alcanzar
+la red interna o la DMZ.
+El firewall externo esta directamente atado a la red DMZ, asi este puede enviar
+paquetes a aquellos hosts. Este necesita una ruta por defecto apuntando a
+Internet asi que pueda alcanzar el resto del mundo. Para alcanzar los hosts en
+la red interna, este debe enviar los paquetes a la interfaz externa del
+firewall interno. Si tu no configuras esto en el firewall externo, los datos
+nunca alcanzaran el firewall interno. Debido a que el firewall externo es
+responsable del acceso a Internet de la red interna. Lo que perder esta ruta
+significa desconectar la red interna de Internet. El sistema interno puede
+enviar paquetes, pero podria nunca recibir nada. El firewall externo necesita
+enrutamiento.
+Similarmente, puedes configurar el enrutamiento en cada host dentro de la DMZ.
+En ese caso, desvios ICMP desde el firewall podria proveer enrutamiento para
+estos hosts, pero confiar en desvios ICMP en una red vulnerable es imprudente y
+sucio por que este asume que cada host en la DMZ y cada firewall acepta y envia
+desvios ICMP (ICMP redirects). Si quieres un OpenBSD seguro, configura un
+enrutamiento en sus sistemas DMZ.
+
+En este ejemplo configurare el enrutamiento para el firewall externo. 
+Configurar el enrutamiento para los hosts DMZ es similar.
+
+Managing Routing with route
+route maneja todo el sistema de enrutamiento. Como netstat, route tiene
+multiples subfunciones que permiten ver, editar y monitorear el sistema de 
+tablas de enrutamiento.
+
+Viewing routes
+OpenBSD como cualquier otro dispositivo de red, mantiene las rutas en una tabla
+de enrutamiento. Para ver las rutas IPv4 e IPv6, hacemos route show. La opcion
+-n remueve las traducciones de IP a nombre.
+
+$ route -n show
+Internet
+Dest            Gateway             Flags   Refs    Use     Mtu     Prio    Iface
+default         192.0.2.1           UGS     4       6414    -       8       vic0    [1]
+127/8           127.0.0.1           UGRS    0       0       33196   8       lo0     [2]
+127.0.0.1       127.0.0.1           UH      1       170     33196   4       lo0     [3]
+192.0.2.32/24   link#1              UC      1       0       -       4       vic0    [4]
+192.0.2.1       00:0c:42:20:7f:42   UHLc    1       0       -       4       vic0    [5]
+224/4           127.0.0.1           URS     0       0       33196   8       lo0     [6]
+
+La tabla muestra la siguiente informacion:
+El campo de destino lista el rango de direcciones IP que esta ruta aplica a -
+direcciones de destino. La entrada default indica la pasarela por defecto, el
+cual es donde el sistema envia todos los paquetes que no tienen una ruta
+especifica.
+El campo pasarela dice donde los paquetes deben ser enviados para esta ruta.
+Una pasarela puede ser un hostname, direccion IP o interfaz de red.
+El campo Banderas contiene marcadores que indican que clase de ruta es y como
+esta se comporta.
+El campo Refs muestra el numero de referencias a la ruta en el kernel (conocido
+como refcounter). Si el refcounter cae a 0, la ruta es removida. Este no tiene
+uso practico en la administracion del sistema, debido a que una referencia es
+suficiente para mantener una ruta en la tabla, y referencias adicionales no 
+cambian nada.
+El contador Use incrementa cada vez que un paquete usa esa ruta.
+Mtu es el MTU. El bloque mas grande que puede viajar sobre esa ruta. Si el
+campo contiene (-), OpenBSD usa el MTU de la interfaz fisica subyacente. La
+interfaz loopback lo0 no es fisica, asi que OpenBSD establece el MTU muy alto.
+Una ruta con un bajo MTU se debe a que un Path MTU discovery se ha dado.
+El campo Prio da la prioridad de la ruta. OpenBSD soporta multiples rutas a un
+unico destino. Algunas rutas son mas deseables que otras, y OpenBSD usara la
+ruta con el numero de prioridad mas bajo. Las rutas provistas por protocolos
+de enrutamiento dinamico, como BGP o OSPF tienen numeros de prioridad mas altos
+que rutas estaticas.
+El campo Iface muestra cual interfaz usa esa ruta.
+
+OpenBSD tambien incluye demonios de enrutamiento dinamico como ospfd y bgpd.
+
+La primera entrada [1] es la ruta por defecto del sistema. Si no hay mas rutas
+especificas, los paquetes seran enviados a la direccion 192.0.2.1.
+
+Para alcanzar la red 127.0.0.0/8 en [2], los paquetes deberian ir a la
+direccion IP 127.0.0.1. 127.0.0.0/8 es el rango de direcciones reservadas para
+direcciones loopback, y 127.0.0.1 es siempre la maquina local. Note el MTU alto.
+Esta es una interfaz en software, asi que no hay limite fisico en el tamaño de
+bloques enviados a traves de esta.
+
+Para alcanzar la direccion IP 127.0.0.1 en [3], enviamos los paquetes a la 
+direccion IP 127.0.0.1. Esto podria ser un poco pedante, pero es una ruta 
+valida y necesita estar en la tabla. Recordar que 127.0.0.1 es siempre la
+direccion loopback de la maquina local.
+
+Para alcanzar la direccion IP 192.0.2.0/24 en [4], usar una pasarela de link#1.
+Esta es una interfaz fisica local. En este caso, es nuestra interface Ethernet.
+La interfaz denominada link#1 es realmente la interfaz con indice #1, la cual
+no esta realmente expuesta al administrador de sistemas en algun otro sitio.
+Estas direcciones son locales a la maquina, y debes calcular cual interfaz es 
+esta por la direccion IP atada a la maquina. Direcciones locales a la maquina
+no necesitan estar realmente en la tabla de enrutamiento, pero nadie se ha
+molestado en quitar este idiota historico.
+
+Para alcanzar una direccion IP especifica en la red local en [5], deberas 
+tener una ruta de la direccion IP y la direccion fisica MAC. Debido a que este
+host esta conectado via Ethernet, la pasarela es una MAC address. Cada direccion
+local que el sistema necesita encontrar obtiene una ruta de entrada, y tu
+casi siempre deberias mostrar una ruta especifica para la pasarela por defecto.
+
+La ultima ruta en [6] es para el rango de direcciones multicast 224/8. Si no
+estas usando multicast, esta deberia ir al local host.
+
+Route flags
+La columna de Flags en la tabla de enrutamiento indica como las rutas son
+generadas o usadas. netstat contiene una lista completa de flags de rutas.
+En la siguiente tabla listamos algunas que son comunes.
+
+Flag    Descripcion
+C       Esta ruta fue clonada.
+c       Esta es una ruta especifica-de-protocolo (tal coomo una direccion Ethernet MAC)
+D       Esta ruta es dinamica.
+G       Esta ruta va a traves de un gateway.
+H       Esta ruta es para un host especifico.
+L       Esta ruta es para la capa de enlace local.
+M       Esta ruta fue modificada.
+R       Esta es una ruta rechazada. Paquetes son eliminados, y un error es enviado.
+B       Esta es una ruta de agujero-negro. Paquetes son eliminados silenciosamente.
+Estas flags te dicen de donde una ruta vino y como es usada.
+
+Agregando rutas
+Agregas rutas con el comando route add. Debes saber la red de destino, su 
+mascara y la pasarela.
+
+# route add address-block/netmask netmask gateway
+
+En nuestra red de ejemplo, el otro firewall necesita una ruta para alcanzar la
+red privada, 192.0.2.128/25. Para enrutar esta red al firewall interior en
+192.0.2.2, corre este comando.
+
+# route add -net 192.0.2.128/25 192.0.2.2
+add net 192.0.2.128: gateway 192.0.2.2
+
+Los paquetes usaran la ruta inmediatamente. Si corres route show, veras la
+nueva ruta.
+Para agregar una ruta por defecto, corre route add default con la direccion IP
+del gateway por defecto, como esta.
+
+# route add default 192.0.2.1
+add net default: gateway 192.0.2.1
+
+Para agregar las rutas automaticamente en el booteo, pon la declaracion route
+en /etc/hostname.if que lleva a la red de destino. Estas rutas aparecen cuando
+la interface esta iniciando, antes de que corra /etc/rc.securelevel o cualquier
+demonio local se inicie. Veremos ejemplos de hostname.if para rutas en el
+siguiente capitulo.
+
+Eliminando rutas
+Para eliminar una entrada de la tabla de enrutamiento, usamos route delete con
+la direccion de red y la mascara.
+
+# route delete address-block -netmask netmask
+
+Para remover la ruta agregada en el ejemplo anterior, corre el siguiente
+comando.
+
+# route delete -net 192.0.2.128 -netmask 255.255.255.128
+delete net 192.0.2.128
+
+Ahora que sabes como las cosas tienen que encajar, veamos como configuramos
+una red Ethernet.
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 12 Conectandose a la red
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+La mayoria tiene conexiones IPv4, pero IPv6 esta ganando importancia. Si no
+puedes tener una IPv6 nativa en tu red, puedes usar un tunnel para alcanzar
+espacio de direcciones IPv6 y proveer IPv6 a tus clientes. Finalmente OpenBSD
+puede combinar conexiones de red en trunks o dividir ellas en redes de area
+local virtuales (VLANS). 
+
+DNS resolution
+Tu probablemente quieras usar hostnames en lugar de direcciones IP, asi que
+sea posible navegar a http://www.cnn.com en lugar de http://157.166.255.18.
+Los sistemas como unix usan un resolver para lograr esta hazaña.
+La mayoria de los hosts usan dos herramientas para mapear entre direcciones IP 
+y hostnames: El host file y DNS. (Otros sistemas operativos soportan servicios
+de nombre adicionales, como YP, LDAP, NIS. Pero por lo general se soportan 
+estos dos).
+El archivo hosts es un archivo de texto en la maquina local que contiene una
+direccion IP estatica y una lista de hostnames. DNS es mas un servicio dinamico
+que atraviesa la red para encontrar informacion. Puedes especificar servidores
+DNS por su direccion IP, pero miraremos el archivo hosts con mas detalle.
+Que si prefieres direcciones IPv4 o IPv6? o quieres que el archivo hosts anule
+el DNS? Quizas tu tienes un dominio por defecto que tus consultas deberian
+usar. El resolver busca ya sea hasta que encuentra la primera respuesta o agota
+sus fuentes de informacion, asi que estas preguntas importan. Especifique a 
+su resolver sus necesidades en /etc/resolv.conf.
+
+The /etc/resolv.conf file
+Configuras el comportamiento del resolver en /etc/resolv.conf. Un sistema sin
+/etc/resolv.conf puede encontrar solo hostnames listados en el archivo hosts.
+Debido a que el archivo hosts comienza vacio, es probableblemente lo que tu no
+quieres. Inicia especificando nombres de dominio.
+
+Default search domains
+Si quieres hacer ping a un host en una red remota, tu esperarios tener que
+especificar el dominio completo. Entrando ping www.openbsd.org deberia trabajar.
+Pero si quieres hacer ping al servidor de tu compañia, podria tener mas sentido
+solo tipear ping www. Y lo puedes hacer, debido a que OpenBSD permite 
+especificar dominios por defecto, asi que cuando tipeas un dominio corto, este
+tratara de encontrar el host apropiado.
+Por ejemplo, si tienes solo un dominio local, tu podrias listar la palabra
+clave del dominio en /etc/resolv.conf como.
+
+domain michaelwlucas.com
+
+Ahora cuando yo ingreso ping ftp, el resolver deberia obtener la direccion IP
+del host ftp.michaelwlucas.com.
+
+Si tienes mas de un dominio local, usa la palabra clave search y una lista de
+dominios como.
+
+search michaelwlucas.com openbsd.org
+
+Si ingreso ping ftp ahora, el resolver deberia obtener la IP del host
+ftp.michaelwlucas.com. Una vez que el resolver aprende que ese host no existe,
+este chequeara para ftp.openbsd.org. Debido a que el host existe, ping empezara
+a funcionar. La palabra search puede tener hasta 6 dominios, y no puede ser
+mas grande que 1024 caracteres.
+
+Using domain and search
+Puedes usar ya sea domain o search. Si usas ambos, la ultima entrada en el
+archivo gana. Si listas multiples lineas search o domains, la ultima en el
+archivo toma efecto. Mostramos lo que no se debe hacer.
+
+search cnn.com openbsd.org
+search sluggy.com michaelwlucas.com
+domain blackhelicopters.org
+
+Tu podrias deshacerte de las dos declaraciones search. El resolver jamas ira
+a traves de esta lista de dominios; este solo usara la lista domain debido a
+que es la ultima.
+
+Name servers
+Ahora que el resolver sabe cuales dominios chequear por defecto, debemos 
+decirle a este que servidor de nombres usar. Listar cada servidor de nombres
+en su propia linea, por direccion IP, en orden de preferencia.
+
+nameserver 192.0.2.5
+nameserver 198.51.100.5
+nameserver 2001:db8::5
+
+Puedes listar hasta tres servidores de nombres, por IP. (Hostnames en la entrada
+nameserver no funciona, por razones obvias). Si tu resolv.conf no lista un
+servidor de nombres, el resolver deberia chequear para un servidor de nombres
+en la maquina local.
+
+Lookup Order
+Tu podrias obtener informacion desde el DNS o desde el archivo hosts.
+El resolver deberia detenerse una vez encuentra una respuesta a la consulta.
+Si chequeas el archivo hosts y luego el DNS, entradas en el archivo hosts
+anulan el servidor de nombres. Si chequeas el servidor de nombres antes del
+archivo hosts, el archivo hosts es usado solo cuando ningun registro DNS esta
+disponible. Ambos tienen sus usos, pero por defecto, el resolver chequea el
+archivo hosts, y luego chequea el DNS. Para invertir esto, usa la palabra clave
+lookup. 
+
+lookup bind file
+
+La opcion file representa /etc/hosts, mientras que debido a un accidente 
+historico bind representa a DNS. (El primer software servidor DNS fue el
+Berkeley Internet Name Domain server, o BIND). El opuesto (file bind) es el
+por defecto, asi que no es necesario especificarlo explicitamente.
+
+Preferred IP protocol
+El resolver por defecto busca para registros IPv4 primero, y luego mira los
+registros IPv6. Para invertirlo, usa la palabra clave family.
+
+family inet6 inet4
+
+De nuevo, el opuesto a este es el por defecto, asi que no es necesario
+especificarlo explicitamente.
+
+The /etc/hosts file
+El archivo hosts empareja direcciones IP a hostnames. Mientras el archivo hosts
+es muy simple, su contenido esta disponible solo en la maquina local. Un archivo
+hosts es mas util en una pequeña red privada, como en tu casa o un laboratorio
+de prueba. Tambien puedes usar un archivo hosts para anular datos desde el
+servidor DNS, tal como cuando quieres probar un nuevo sistema.
+Cada linea en /etc/hosts representa un host. La primera entrada en cada linea
+es una direccion IP. La segunda es el nombre de dominio totalmente titulado del
+host.  Siguiendo estas dos entradas, puedes tener un numero arbitrario de 
+aliases para ese host. A menudo agrego comentarios al final de la linea, con el
+prefijo #.
+
+Hubo un tiempo en que tuve una pequeña red en casa de solo cuatro maquinas. El
+proxy/firewall, el desktop de mi esposa, mi laptop y la maquina de pruebas.
+El archivo hosts lucia como este:
+
+192.0.2.1 [1]nat.blackhelicopters.org [2]nat firewall gateway
+192.0.2.8 boss.blackhelicopters.org boss wife [3]# don't crash
+192.0.2.20 crashbox.blackhelicopters.org crashbox test
+192.0.10.21 laptop.blackhelicopters.org laptop mwlucas
+
+La maquina nat.blackhelicopters.org en [1] tambien tiene los nombres firewall
+y gateway en [2]. Agregue una nota para recordar que en [3] no corre un
+scanner de seguridad en contra del desktop de mi esposa. (La maquina crashbox
+es tambien llamada test). Cualquier maquina con esta tabla hosts puede encontrar
+cualquier maquina listada en la tabla hosts por el nombre. Por ejemplo, yo
+puedo correr ping boss or ssh crashbox y alcanzar la maquina deseada.
+El archivo hosts trabaja bien para encontrar hosts en redes, pero cada vez que
+agregues, remuevas o cambies una maquina, tu debes editar /etc/hosts en cada
+computador. Y cada vez que cambies una direccion IP, debes editar /etc/hosts
+en cada maquina.
+Desafortunadamente /etc/hosts no es escalable. Cuando yo alcance cinco maquinas,
+agregue un DNS interno y vacie los archivos hosts en todos mis sistemas.
+
+Resolver vs Dynamic Configuration
+Si tu sistema OpenBSD vaga entre redes, como una laptop, tu probablemente uses
+DHCP para configurar tu conexion de red.
+DHCP sobrescribe /etc/resolv.conf con la informacion para su red. Esto es
+apropiado para la mayoria de los usuarios, pero si estas llevando una laptop
+con OpenBSD, tu no eres normal. Tu probablemente quieres alguna de tus 
+configuraciones resolver, como tu lista de busqueda de dominios, mantenerla
+vigente sin importar en que red te encuentres.
+OpenBSD soporta configuracion de resolver permanente en /etc/resolv.conf.tail.
+Cuando el cliente DHCP en OpenBSD obtiene la informacion /etc/resolv.conf desde
+el servidor, este escribe en /etc/resolv.conf y agrega /etc/resolv.conf.tail al
+final.
+Recuerda que solamente la ultima palabra clave search o domain trabaja.
+resolv.conf.tail toma ventaja de eso, permitiendo anular el orden de busqueda
+de su administrador de red.
+
+Ethernet
+Ethernet es una red compartida, lo que significa que cualquier maquina diferente
+puede conectarse al mismo Ethernet y puede comunicarse directamente con cada
+otra. Asumo que estas usando Ethernet tal como en una oficina o datacenter.
+Aunque Ethernet ha sido implementado sobre muchos medios fisicos diferentes,
+asumo que estas trabajando com CAT5 o un mejor cable. La eleccion mas popular.
+Si usas un medio diferente, o tu tarjeta soporta multiples medios, necesitaras
+establecer manualmente tu medio preferido o tu interfaz.
+
+Protocol and Hardware
+Ethernet es un protocolo broadcast, lo que significa que cada paquete que
+transmites puede ser enviado a cada host en la red. (Aunque la mayoria de
+hardware Ethernet limita los destinatarios. Ya sea que tu tarjeta de red o tu
+controlador de dispositivo separe los datos destinados a tu computador de los
+datos destinados para otros equipos. Una seccion de Ethernet donde todos los
+hosts pueden comunicarse directamente con todos los otros hosts, sin involucrar
+un router, es llamado un dominio de colision o segmento.
+Puedes conectar segmentos Ethernet con hubs, el cual son hardware que pueden
+conectar fisicamente muchos Ethernet hosts. Los hubs de red reenvian todos los
+frames recibidos a todos los demas dispositivos de red, y cada host es 
+responsable de filtrar el trafico. Esta es la vieja escuela del Ethernet, el
+cual puede ser util para la depuracion de problemas de red.
+Los switches han reemplazado extensamente a los hubs. Cada conexion Ethernet
+necesita un unico identificador, llamado direccion MAC (A veces denominado
+Direccion Ethernet) el cual es un numero de 48-bit. Los switches controlan el
+trafico enviado a cada host por filtrado en la MAC y direccion IP de los
+dispositivos conectados y (en su mayoria) reenviando frames solo a los 
+dispositivos que estan destinados. Switching reduce la cantidad de trafico y
+carga en cada sistema individual debido al decrecimiento de la cantidad de
+trafico que cada host debe clasificar a traves de el.
+En hardware i386 o amd64, la direccion MAC es propiedad de la tarjeta. En otras
+plataformas como SPARC, la direccion MAC es una propiedad del servidor en si
+mismo. Ambos IPv4 e IPv6 usan la direccion MAC para encontrar otros hosts en la
+red local.
+
+IPv4 and ARP
+Cuando un sistema necesita transmitir datos a otro host basado en IP en la
+Ethernet local, este primero broadcast una peticion Ethernet preguntando,
+Cual direccion MAC es responsable de la direccion IP? Si un host responde, los
+siguientes datos transmitidos a esa IP son enviados a esa direccion MAC. Este
+proceso es manejado por ARP.
+Usar arp para ver la tabla ARP de tu sistema, el cual es la lista de hosts que
+tu sistema conoce. Con arp -a se muestra todas las direcciones MAC e IPv4 
+hostnames que tu computador conoce.
+
+$ arp -a
+fly.blackhelicopters.org (192.0.2.225) at 00:a0:c8:10:eb:82 on fxp0
+caddis.blackhelicopters.org (192.0.2.226) at 00:16:36:c0:58:a5 on fxp0 static
+treble.blackhelicopters.org (192.0.2.227) at 00:0c:42:5a:58:ae on fxp0
+salmon.blackhelicopters.org (192.0.2.232) at (incomplete) on fxp0
+
+Aqui puedes ver los tres hosts en mi red Ethernet con los que este host se ha
+comunicado. Yo tengo mas hosts, pero debido a que esta maquina no ha hablado
+con ellos ultimamente, ellos no estan en la tabla ARP local.
+Si una direccion MAC se muestra como incomplete, tu maquina ha intentado
+comunicarse con este host pero no ha podido obtener su direccion MAC. En este
+ejemplo, yo he intentado enviar datos al host salmon, pero mi computador no
+puede alcanzarlo. (Encender salmon ayudaria).
+
+IPv6 and Neighbor Discovery
+Hosts IPv6 tambien usan direcciones MAC para encontrar otro a traves de ND, un
+protocolo IPv6 introducido en el capitulo previo. Interrogar tu cache ND con
+ndp. Las opciones de comando para ndp son intencionalmente similares a las de
+arp.
+
+$ ndp -a
+Neighbor                            Linklayer Address   Netif   Expire      S   Flags
+2001:db8:0:12:20c:29ff:feb5:7565    0:c:29:b5:75:65     vic0    permanent   R
+2001:db8:0:12:5446:fbc:fca0:f2e9    0:c:29:b5:75:65     vic0    permanent   R
+... 
+fe80::20c:29ff:feb5:7565%vic0       0:c:29:b5:75:65     vic0    permanent   R
+fe80::20c:42ff:fe20:7f42%vic0       0:c:42:20:7f:42     vic0    11h20m47s   S   R
+fe80::1%lo0                         (incomplete)        lo0     permanent   R
+
+Como la ARP cache, el ND cache muestra una direccion IPv6, una direccion fisica,
+la interfaz, y otros detalles para cada host. Veras mas entradas ND que ARP
+porque todas las direcciones de enlace local se muestran en la ND cache.
+Si intentas alcanzar un host que esta directamente atado a tu red local y este
+no responde, chequea la ND cache. Si una entrada ND cache se muestra como
+(incomplete), como con ARP, entonces hay algun tipo de problema basico en la
+conectividad.
+
+Speed and Duplex
+Ethernet soporta una variedad de velocidades. La mas lenta que puedes encontrar
+es de 10 megabits per second (Mbps), pero esta desapareciendo rapidamente.
+La mayoria de usuarios usa ya sea 10/100Mbps o 1 gigabit per second Gbps,
+aunque veras 10Gbps, 40Gbps y 100Gbps Ethernet emergiendo.
+Los hosts y switch que estan conectados en tu red deben estar de acuerdo en la
+velocidad de su conexion. Si el host OpenBSD piensa que esta conectado a
+100Mbps, pero el switch piensa que la conexion es de 1Gbps, la conexion sera
+inconsistente. Mientras la autonegociacion usualmente hace que ambos lados
+esten de acuerdo en configuraciones comunes (y es absolutamente requerido para
+conexiones de 1 gigabit), tu puedes establecer manualmente duplex y velocidad
+para conexiones de 10/100Mbps. Aunque algunos switch son notoriamente pobres
+para la autonegociacion, tu deberias dejar que Ethernet se configure a si misma
+siempre que sea posible.
+Duplex determina si la tarjeta puede transmitir y recibir datos simultaneamente.
+Una conexion half-duplex significa que la tarjeta Ethernet esta transmitiendo o
+recibiendo en un instante dado. pero no ambos. Una conexion full-duplex puede
+enviar y recibir simultaneamente. Al igual que la velocidad de conexion, si el
+switch y el host no estan de acuerdo en la configuracion duplex, la conexion
+sera inconsistente. Las conexiones Ethernet de Gigabit involucra mucho mas que
+la velocidad y duplex, y esta debe ser autonegociada.
+Solo porque un dispositivo dice que este puede usar el protocolo definido como
+10/100Mbps Ethernet no significa que este pueda usar ese protocolo con cualquier
+velocidad. Tambien, una tarjeta etiquetada con 1Gbps podria no realmente pasar
+a un gigabit per second. Algunas tarjetas transmitiran a la cantidad indicada,
+mientras otras se tropezaran y tambalearan en un pequeño porcentaje de eso.
+La calidad de los switches tambien variara ampliamente.
+Tiene mas sentido si piensas de la velocidad fijada en Ethernet como un
+lenguaje. Por ejemplo, podria reclamar que hablo ruso y german, pero yo
+detuve el estudio de lenguajes extranjeros en 1985. Cuando yo fui a Alemania
+en 2007, maneje cerca de tres palabras por minuto, con la ayuda de una tarjeta
+traductora y un libro. Si fuera una tarjeta Ethernet, el fabricante podria
+reclamar que yo hablo german y ruso, enviarme a siberia.
+Obten un hardware decente. No preguntes en la lista de OpenBSD, aunque ya lo
+hicieron y las recomendaciones aun se mantienen.
+
+Configuring Ethernet
+Cuando configuramos Ethernet para clientes, si tu red IPv4 ofrece DHCP, tu solo
+deberias conectarlo correctamente. Si usas IPv6, deberia ser posible adjuntar
+el cable y permitir que la autoconfiguracion tomara el control.
+Si una maquina en particular sera servidor, una IP estatica tendra mas sentido.
+Antes de asignar una direccion estatica, necesitaras lo siguiente.
+
++ Una direccion IP (IPv4, IPv6 o ambos)
++ La mascara/prefijo de tamaño
++ Direccion/es IP del gateway por defecto
+
+Armado con esta informacion, conecta tu sistema a la red y sigue leyendo.
+Discutire ifconfig y route para hacer cambios manualmente, y luego revisare 
+como establecerlos automaticamente en el booteo. En cualquier caso debes
+configurar el resolver como discutimos al principio del capitulo.
+
+Using ifconfig
+Si instalaste OpenBSD sobre una red, tu conexion Ethernet deberia estar ya
+trabajando, pero podria no estar configurada como tu quieres. Para manejar tus
+interfaces de red, usa ifconfig.
+Permiteme mirar en tu tarjeta Ethernet y ver que tiene esta para decir. Inicia
+preguntando a tu sistema acerca de todas las interfaces que este ha instalado,
+corriendo ifconfig.
+Todos los sistemas OpenBSD tienen tres interfaces logicas fuera de la caja:
+lo0, enc0 y pflog0. La interfaz lo0 es la interfaz loopback, refiriendose a la
+maquina local. La interfaz enc0 es una interfaz de encapsulacion para trafico
+IPsec. Finalmente, pflog0 es para el registro de trafico PF, como veremos en el
+capitulo 22. El resto de interfaces son las fisicas.
+A diferencia de algunos sistemas operativos, las interfaces de red OpenBSD son
+nombradas despues del controlador de dispositivo del hardware subyacente. Aqui
+un ejemplo.
+
+$ ifconfig
+fxp0: flags=8843 [1] <UP,BROADCAST,RUNNING,SIMPLEX,MULTICAST> mtu 1500
+    lladdr 00:16:36:c0:58:a5
+    priority: 0
+    groups: egress
+    media: Ethernet autoselect (100baseTX full-duplex)
+[2] status: active
+[3] inet 192.0.2.226 netmask 0xffffff00 broadcast 192.0.2.255
+    inet6 2001:db8::216:36ff:fec0:58a5 prefixlen 64
+    inet6 fe80::216:36ff:fec0:58a5%fxp0 prefixlen 64 scopeid 0x2
+
+La interfaz fxp0 usa el controlador de dispositivo fxp(4), el cual la pagina
+man dice que es una tarjeta Intel EtherExpress PRO 10/100. Como puedes ver en
+[1] la interfaz esta up-encendida, lo que significa que esta activa y lista 
+para usar. La lladdr es la direccion de enlace local, o la direccion MAC de la
+tarjeta. Esta tarjeta esta en el grupo egress. OpenBSD usa grupos de interfaz
+en multiples lugares, incluyendo filtrador de paquetes discutido en el capitulo
+22.
+Para ver el tipo de medio fisico subyacente en la conexion, chequea la linea
+media. Esta conexion en particular corre en 100Mbps full-duplex. La conexion
+esta activa como mostramos en [2]; La capa fisica no solo ha sido configurada,
+sino que tambien tiene un indicador de luz y lista para funcionar. La conexion
+ha sido asignada a una direccion IPv4 y mascara de red, como se muestra en [3].
+Puedes ver en las dos lineas que siguen que ambas una direccion IPv6 y direccion
+de enlace local IPv6 han sido asignadas.
+Usa ifconfig para asignar, cambiar y remover direcciones IP de una interfaz de
+red. El instalador OpenBSD ofrece configurar tu tarjeta de red en el booteo,
+pero si tu no configuras todas tus interfaces en la instalacion o si agregas o
+remueves interfaces despues de esta, deberas hacerlo manualmente.
+
+Adding an IP address
+Para agregar una direccion IPv4, inicia con la interfaz, luego la direccion IP
+y por ultimo la mascara.
+
+# ifconfig interface-name IP-address netmask
+
+Si tu tarjeta es fxp0, y la direccion IP es 192.0.2.55 y la mascara de red es
+255.255.255.128 entonces corre.
+
+# ifconfig fxp0 192.0.2.55 255.255.255.128
+
+Especifica la mascara de red en notacion normal con puntos, hexadecimal o 
+incluso con slash /.
+
+# ifconfig fxp0 192.0.2.55/25
+
+No necesitas especificar la mascara de red por separado si la especificas con
+slash /.
+Agregar una direccion IPv6 es diferente. Especifica una direccion, un slash /
+y la longitud del prefijo, pero no intentes agregar una mascara de red por
+separado. Solo usa el / que es parte de la direccion. Un ejemplo seria.
+
+# ifconfig fxp0 inet6 2001:db8:0:12::2/64
+
+Removing IP Addresses
+Si necesitas remover una direccion IP de la interfaz, usa la opcion delete de
+ifconfig para ambos IPv4 e IPv6.
+
+# ifconfig fxp0 192.0.2.55 delete
+
+El efecto es inmediato, asi que asegurate de no quedar/encerrarse fuera del
+sistema removiendo todas las direcciones IP accesibles, o removiendo la unica
+direccion de tu demonio SSH conectado. (En raras ocasiones, conexiones 
+existentes con direcciones eliminadas siguen trabajando, pero por lo general no
+es asi, asi que no cuentes con ello).
+
+Multiple IP Addresses on one Ethernet card
+Una interfaz de red puede responder a solicitudes de varias direcciones IP, lo
+cual es importante porque un servidor podria soportar cientos o miles de
+dominios y necesitan una direccion IP para cada uno. (Esto no es importante
+para sitios web planos, pero si para sitios web basados en SSL y protocolos que
+confian en DNS inverso).
+Para agregar direcciones IP extra a una interfaz , use IP aliases. IP aliases
+le dice a la tarjeta de red "responda peticiones para esta direccion IP asi como
+para la tuya". Para agregar una direccion IP aliada, use ifconfig con alias
+despues del nombre de la interfaz para decirle a ifconfig que esta es un alias.
+Asegurate siempre de usar una mascara de 255.255.255.255 o /32 para direcciones
+alias.
+
+# ifconfig fxp0 alias 192.0.2.230/32
+# ifconfig fxp0
+...
+    inet 192.0.2.226 netmask 0xfffffff0 broadcast 192.0.2.239
+    inet 192.0.2.230 netmask 0xffffffff
+
+La interfaz tiene una direccion IP principal .226 y una direccion IP alias .230.
+Cuando trabajes con direcciones IPv6, agrega la palabra inet6, como aqui.
+
+# ifconfig fxp0 inet6 alias 2001:db8:0:12::3/64
+
+Es importante notar que todas las conexiones salientes en un host con una 
+conexion de red usa la direccion IP primaria. Por ejemplo tu podrias tener
+2000 direcciones IP enlazadas a una interfaz, pero cuando tu ssh sale, la
+conexion viene de la direccion primaria. Recuerda esto cuando escribes las
+reglas de firewall o listas de control de acceso, porque mientras algunos
+programas tienen una opcion para establecer una direccion fuente diferente,
+ellos son la excepcion. El kernel OpenBSD no diferencia entre una direccion
+IP primaria y aliases. Este solo mantiene una lista de direcciones IP. Pero
+usara la primera direccion en su lista como la direccion fuente a menos que
+diga lo contrario. Si un host tiene multiples conexiones de red, la direccion
+de origen de conexiones salientes es la direccion IP principal de la interfaz 
+de red en la cual los paquetes dejan el sistema.
+
+Para remover un alias, usa la opcion delete de ifconfig y da la direccion IP
+sin mascara.
+
+# ifconfig fxp0 delete 192.0.2.230
+
+Para IPv6 usa inet6 delete en su lugar
+
+# ifconfig fxp0 inet6 delete 2001:db8:0:12::3
+
+Si eliminas la direccion principal de una interfaz, el primer alias se convierte
+en la direccion IP principal. Si no tienes direcciones IP alias restantes y 
+remueves la direccion IP principal, esa interfaz detiene el paso de trafico IP.
+
+Configuring Default Routes
+Usar route para configurar rutas por defecto para cada protocolo.
+
+# route add default 192.0.2.1
+add net default: gateway 192.0.2.1
+
+Una ruta por defecto en IPv6 es casi identica, pero debes agregar el modificador
+-inet6.
+
+# route add -inet6 default 2001:db8:0:12::1
+add net default: gateway 2001:...:1
+
+Una vez que has agregado las direcciones IP y las rutas por defecto a tu host,
+podras ser capaz de alcanzar el resto de tu red e Internet. Ahora veamos como
+hacer los cambios tras un reinicio.
+
+Using Dynamic Configuration
+Para hacer que OpenBSD obtenga una direccion IPv4 desde un servidor DHCP, corre
+dhclient y dale a este el nombre de la interfaz que quieres configurar.
+
+# dhclient fxp0
+
+dhclient obtiene una direccion IP, sobrescribe /etc/resolv.conf y configura la
+ruta por defecto.
+Para IPv6, corre rtsol en su lugar.
+
+# rtsol fxp0
+
+Recuerda que la autoconfiguracion IPv6 no configura tu resolver. Necesitaras
+aprovecharte del servidor DNS IPv4 o configurar /etc/resolv.conf manualmente.
+
+Configuring the Network at boot
+Mientras ifconfig es bueno para cambios en el aire, tu sistema deberia
+configurar sus interfaces correctamente en el booteo, incluyendo cualquier alias
+en la interfaz y cualquier ruta agregada cuando la interfaz empieza a funcionar
+y asi en adelante.
+Cada interfaz tiene un archivo de configuracion, /etc/hostname.interfacename,
+generalmente llamado hostname.if. La interfaz fxp0 en mi desktop usa el archivo
+de configuracion /etc/hostname.fxp0, la interfaz wireless wpi0 usa
+/etc/hostname.wpi0 y asi. En el booteo, el script /etc/netstart en OpenBSD lee
+todos los archivos hostname.if y si este encuentra una interfaz fisica que
+concuerde o puede crear una interfaz logica que lo haga, este configura la
+interfaz como corresponde.
+Para configurar una interfaz con una direccion IPv4, ingrese la siguiente linea
+en hostname.if en el formato.
+
+inet ipaddress netmask broadcastaddress ifconfig-options
+
+La direccion broadcast y opciones son opcionales. Para usar las opciones sin
+especificar una direccion broadcast, use NONE para la direccion broadcast. 
+Puedes usar slash / para la mascara de red de el decimal equivalente.
+Similarmente, agregas una direccion IPv6 con lo siguiente.
+
+inet6 ipv6address/prefix ifconfig-options
+
+Para darle a fxp0 la direccion IPv4 de 192.0.2.226  255.255.255.240 y la
+direccion IPv6 de 2001:db8:0:12::2/64 en el booteo, use lo siguiente en
+/etc/hostname.fxp0.
+
+inet 192.0.2.226 255.255.255.240 NONE description 'top card'
+inet6 2001:db8:0:12::2/64
+
+Aqui yo defino una descripcion a la interfaz que se mostrara en la salida de
+ifconfig.
+Para crear una direccion IP alias en el boot, usa la palabra alias en
+hostname.if.
+
+inet alias 192.0.2.230/32
+inet6 alias 2001:db8:0:12::3/64
+
+Para correr un comando cuando la interfaz surge, pon un simbolo de exclamacion
+! en el frente del comando. Cualquier comando que se corre debe estar disponible
+en la particion root (por ejemplo /bin o /sbin). Esta caracteristica es
+comunmente usada para el enrutamiento, pero puedes usar otros comandos tambien.
+
+!route add 192.0.2.128/25 192.0.2.2
+
+Para configurar una interfaz dinamicamente, via DHCP (IPv4) o rtsol (IPv6),
+pon la cadena dhcp o rtsol en una linea.
+
+dhcp
+rtsol
+
+Cualquier cosa que no este formateado como se muestra aqui es pasado sin editar
+a ifconfig. Por ejemplo, para correr un comando ifconfig especifico, pon los
+argumentos en su propia linea en hostname.if.
+
+description 'lower card'
+
+Si simplemente quieres activar una tarjeta de red, pero no configurarla usa la
+palabra up en una linea para activar la interfaz.
+
+up
+
+Y recuerda, puedes testear los cambios en hostname.if con /etc/netstart,
+especificando un nombre de interfaz si es apropiado.
+
+# /bin/sh /etc/netstart fxp0
+
+No incluir el nombre de la interfaz reconfigura todas las interfaces en el
+sistema.
+
+Trunking
+Servidores pueden tener discos duros redundantes, fuentes de alimentacion, etc.
+OpenBSD soporta conexiones de red dedundantes combinando multiples enlaces
+Ethernet en un unico enlace virtual, o trunk/troncal. Podras encontrarlo tambien
+como link aggregation, network adapter teaming o bonding.
+
+Link aggregation protocols
+Para usar multiples enlaces fisicos como un unico gran enlace, necesitas una 
+forma de distribuir el trafico entre los enlaces. OpenBSD soporta cinco
+diferentes formas para distribuir frames entre los miembros del trunk/troncal, 
+aunque no todos trabajaran en todos los entornos. Los protocolos que recomiendo
+para un uso en produccion son Link Aggregation Control Protocol (LACP), 
+roundrobin, y failover. LACP es el estandar de la industria para link 
+aggregation. Las interfaces fisicas son vinculadas a una unica interfaz virtual 
+con aproximadamente el mismo ancho de banda como la suma de las interfaces
+individuales. LACP es altamente tolerante-a-fallos, y casi todos los switches
+gestionados de gama alta deberian soportarlo. Si tu switch soporta LACP, usalo,
+pero deberas configurarlo. "LACP on the switch ports before this kind of trunk 
+will pass traffic."
+En el metodo roundrobin, OpenBSD envia frames a traves de conexiones activas
+del trunk/troncal usando un planificador roundrobin. El trunk/troncal acepta 
+paquetes entrantes en cualquier puerto, y un planificador roundrobin rota entre
+el troncal de conexiones, con manejadores de error y extremo en la cima.
+El troncal roundrobin no necesita una configuracion de switch especial; ellos
+solo necesitan dos puertos en la misma VLAN.
+En el caso de failover, OpenBSD envia y recibe todo el trafico sobre el primer
+puerto en el troncal, y si ese puerto falla, este cambia a otro puerto activo.
+El metodo failover no da un ancho de banda adicional, no requiere ninguna ayuda
+de un switch, e incluso trabajo en viejos hubs.
+
+Trunk Configuration
+Como ejemplo, configuraremos los puertos em0 y em1 en failover trunk trunk0.
+Los puertos subyacentes no han sido configurados antes, asi que iniciamos
+activando estas interfaces sin ninguna configuracion.
+
+# ifconfig em0 up
+# ifconfig em1 up
+
+Ahora creamos el failover trunk con ifconfig y agregamos estos puertos a este
+haciendo la interfaz trunk0 usable.
+
+# ifconfig trunk0 trunkproto failover
+# ifconfig trunk0 trunkport em0
+# ifconfig trunk0 trunkport em1
+
+Puedes hacer todo esto en un comando ifconfig largo, pero de esta manera es mas
+facil cuando se esta aprendiendo. Asignamos a la interfaz una direccion IP tal
+como lo harias en una interfaz fisica y agregamos un gateway por defecto a tu
+sistema.
+
+# ifconfig trunk0 192.0.2.8 netmask 255.255.255.0
+# route add default 192.0.2.1
+
+Deberias tener ahora un trunk failover atado a tu red local. Para configurar
+otro protocolo trunk, solo especifica el protocolo deseado cuando tu creas el
+trunk. Encontraras una lista completa en trunk(4).
+
+Trunks at Boot
+
+Configura tu trunk en /etc/hostname.if. Por ejemplo, supongamos que necesitas
+editar hostname.em0, hostname.em1 y hostname.trunk0. Ambos de los archivos em
+tiene una unica palabra:
+
+up
+
+Esto activa las interfaces, pero no las configura.
+hostname.trunk0 es mas complicado.
+
+trunkproto failover
+trunkport em0
+trunkport em1
+192.0.2.8 netmask 255.255.255.0
+
+Puedes poner todas estas entradas en una linea, tal como configuras el trunk
+en un unico comando ifconfig, pero una vez mas, asi es mas facil de entender.
+Tu trunk deberia iniciar ahora en el boot.
+
+Note que los trunks no necesariamente consisten de interfaces que usen el mismo
+tipo de medio fisico. Si te sientes aventurero, tu podrias intentar replicar lo
+que algunos desarrolladores OpenBSD y usuarios han hecho: Trunk en conjunto
+una interfaz cableada y no-cableada, y todas tus conexiones estaran a salvo,
+cuando desconectes tu puerto Ethernet, o si lo conectas de nuevo y tomas tu
+punto de acceso para mantenimiento.
+
+VLANs
+Las VLANs son una forma de obtener multiples segmentos Ethernet en una unica
+pieza de cableado. Algunas veces lo veras referido como 802.1q, tagging o una
+combinacion de ambos terminos.
+En terminos OpenBSD, un cableado puede llevar multiples redes, y configurando
+una interfaz adicional, puedes comunicarte con aquellas redes adicionales como
+si ellas tuvieran su propio cableado privado. El cableado puede unicamente
+traer datos, sin embargo, todas las VLANs y redes regulares (o VLAN nativas)
+que comparten el cable comparte el mismo ancho de banda.
+Los frames VLAN que llegan a tu tarjeta de red son como frames regulares 
+Ethernet, con una cabecera adicional antes del frame que dice "Esto es parte
+de VLAN numero ...". Cada VLAN es identificada por un numero. VLAN numero 1 es
+usualmente la VLAN nativa - la VLAN que llega sin ninguna etiqueta.
+Por conveniencia, usare la palabra "tagged" para describir como la VLAN es
+entregada a tu host.
+
+Como usar VLANs en OpenBSD? quizas tengas una red dividida en multiples 
+segmentos Ethernet, tal como el firewall externo, area de servidores,
+clientes de escritorio. O podrias tener un OpenBSD que necesite acceso directo
+a todos estos segmentos. Podrias enrutar todas estas redes sobre un unico
+cableado fisico. Eventualmente tendras problemas con el ancho de banda, si
+estas manejando mas de 1Gpbs a traves de tu server, tu podrias proporcionar una
+segunda tarjeta de red.
+
+Configuring Switches
+Debes configurar tu switch para enviar VLANs a tu caja OpenBSD como 802.1q o
+tagged, dependiendo de la sintaxis del switch. Cisco usa 802.1q, HP procurve
+usa tagged, y otros switches usan lo que sus prejuicios dictan. Son docenas de
+diferentes sintaxis para hacer esto, asi que no te dare un ejemplo especifico.
+Si el switch no puede enviar tagged VLANs a tu servidor, no podras usar VLANs.
+
+Configuring VLAN devices
+OpenBSD crea interfaces vlan a pedido. Para crear el mecanismo, necesitas
+saber a cual dispositivo fisico quieres atar la VLAN y el numero de VLAN que
+esperas. Creas la interface vlan con ifconfig.
+
+# ifconfig vlanX vlan vlan# vlandev interface
+
+Si no especificas en numero VLAN, OpenBSD asigna el numero VLAN a partir del
+numero de la interfaz. Por ejemplo, aqui creamos la interfaz vlan3 y usamos este
+para acceder a VLAN3 sobre la interfaz fxp0.
+
+# ifconfig vlan3 vlandev fxp0
+
+Eso es todo. Ahora puedes ver tu nueva interfaz usando,
+
+$ ifconfig vlan3
+vlan3: flags=48843<UP,BROADCAST,RUNNING,SIMPLEX,MULTICAST,INET6_PRIVACY> mtu 1500
+        lladdr 00:16:36:c0:58:a5
+        priority: 0
+        vlan: 3 parent interface: fxp0
+        groups: vlan
+        status: active
+        inet6 fe80::216:36ff:fec0:58a5%vlan3 prefixlen 64 scopeid 0x7
+
+Luce como una interfaz fisica y desde tu punto de vista, lo es. Puedes
+agregar una direccion IP tal como lo harias con otra interfaz, asignar rutas y
+continuar con tu vida.
+
+Configuring VLANs at boot
+Para configurar una interfaz VLAN en tiempo de booteo, crea un hostname.if para
+este. Por ejemplo, el contenido de /etc/hostname.vlan3 que crea la interfaz
+hecha en la seccion anterior, asigna esta a VLAN3, y la configura
+automacticamente para ambos IPv4 e IPv6.
+
+vlandev fxp0
+dhcp
+rtsol
+
+OpenBSD deberia encontrar este archivo en el booteo y crear la interfaz acorde 
+a tus comandos.
+
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 13 Manejo de software
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+
+
+(PARENTESIS)
+echo $PKG_PATH
+... none
+PKG_PATH=ftp://mirrors.ucr.ac.cr/OpenBSD/5.5/packages/amd64/
+pkg_info -Q openbox
+openbox-3.5.2
+pkg_add openbox-3.5.2
+Cuando alguna dependencia no pueda ser instalada, intentamos
+instalarla separadamente.
+pkg_add harfbuzz.9.25 y luego continuamos con instalacion principal
+pkg_add openbox-3.2.5
+(PARENTESIS)
