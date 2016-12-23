@@ -1354,13 +1354,14 @@ Sudo y el entorno
 Ciertas variables de entorno pueden causar problemas. Por ejemplo $HOME es una de
 ellas. Un usuario no puede crear archivos en otro directorio home de otros usuarios.
 Otra como LD_LIBRARY_PATH puede causar molestias interminables, asi como problemas
-de seguridad, ya que las aplicaciones tratan de enlazar con bibliotecas equivocadas.
+de seguridad, ya que las aplicaciones tratan de enlazarse con bibliotecas equivocadas.
 Sudo puede remover variables de entorno sospechosas, resetear completamente el
 entorno del usuario, o ser configurado para preservar el entorno original del
-usuario. La variable env_reset sudoers es puesta por defecto. Esto limpia todas las
-variables de entorno excepto LOGNAME, SHELL, USER, USERNAME y cualquier cosa que
-inicie con SUDO_. Puedes cambiar este comportamiento deshabilitando env_reset, pero
-I strongly recommend against disabling environment purging.
+usuario. La variable env_reset sudoers es puesta por defecto. Esto limpia todas 
+las variables de entorno excepto LOGNAME, SHELL, USER, USERNAME y cualquier cosa 
+que inicie con SUDO_. Puedes cambiar este comportamiento deshabilitando 
+env_reset, pero recomiendo encarecidamente contra la deshabilitacion la
+depuracion del entorno.
 
 En lugar de dejar a los usuarios llevar ciegamente la basura al azar en su entorno
 junto con ellos, crear una lista de variables de entorno necesarias y seguras que
@@ -1385,10 +1386,10 @@ ciertos grupos.
 
 Usando sudo
 
-Ahora que sabemos como establecer permisos sudo, permitame mostrar como usarlo.
-Tu cuenta sudo justo ahora tiene permisos para correr cualquier comando. La forma
-facil de lograrlo si no es asi, es descomentar la entrada wheel en sudoers, 
-permitiendo a los miembros del wheel acceder a todos los comandos.
+Ahora que sabemos como establecer permisos sudo, permitanme mostrar como usarlo.
+Tu cuenta sudo justo ahora tiene permisos para correr cualquier comando. 
+La forma facil de lograrlo si no es asi, es descomentar la entrada wheel en 
+sudoers, permitiendo a los miembros de wheel acceder a todos los comandos.
 
 %wheel ALL=(ALL) SETENV: ALL
 
@@ -1413,14 +1414,14 @@ Sudo password caching
 
 Luego de 5 minutos de haberte logueado sudo recordara este hecho. Luego de otros
 5 minutos sudo pedira reautenticacion. Puedes decirle a sudo que olvide tu
-contraseña cached con sudo -k. Puedes controlar el tiempo que pasa antes de volver
-a solicitar la contraseña de nuevo con timestamp_timeout en sudoers.
+contraseña en cache con sudo -k. Puedes controlar el tiempo que pasa antes de 
+volver a solicitar la contraseña de nuevo con timestamp_timeout en sudoers.
 
 Defaults timestamp_timeout 10 // diez minutos
 
 Con timeout a 0, sudo siempre preguntara por una contraseña. Si es < 0 sudo
-almacena la contraseña a lo largo de la sesion. Debes correr sudo -k para olvidar
-que entraste tu contraseña.
+almacena la contraseña a lo largo de la sesion. Debes correr sudo -k para 
+olvidar que entraste tu contraseña.
 
 Corriendo comandos bajo sudo
 
@@ -1460,8 +1461,8 @@ sbaxter		dns1=/etc/rc.d/named,/sbin/mount_nfs, \
 		sudoedit /etc/named.conf, /etc/rndc.key
 
 sudoedit es seguido por una lista de archivos que el usuario puede editar, 
-permitiendole a el modificarlos sin privilegios root, lo hace pasandole el nombre
-del archivo a sudoedit.
+permitiendole a el modificarlos sin privilegios root, lo hace pasandole el 
+nombre del archivo a sudoedit.
 
 $ sudoedit /etc/named.conf
 
@@ -1469,7 +1470,8 @@ sudoedit copia el archivo a un archivo temporal en que el dueño es el usuario,
 y cuando el usuario cierra el editor, este copia el archivo temporal a la
 ubicacion original. El usuario nunca corre el editor como root. sudoedit usa el
 editor dado a variables de entorno $SUDO_EDITOR, $VISUAL o $EDITOR. Usuarios
-pueden establecer esa variable si no quieren que el sistema ofrezca una por ellos.
+pueden establecer esa variable si no quieren que el sistema ofrezca una por 
+ellos.
 
 El gran error de sudo: Exclusiones
 
@@ -1483,7 +1485,7 @@ ganar acceso root si lo usas.
 
 Iniciamos definiendo los alias de comando que contienen aquellos comandos
 prohibidos. Uno es su, como tambien las shell de usuario, ya que si ejecutas
-una shell como un usuario, tu te convertiras a ese usuario.
+una shell como un usuario, tu te convertiras en ese usuario.
 
 Cmnd_Alias SHELLS = /bin/sh,/bin/csh,/usr/local/bin/tcsh
 Cmnd_Alias SU = /usr/bin/su
@@ -1496,9 +1498,10 @@ $ sudo sh
 ...
 Sorry, user pkdick is not allowed to execute '/usr/bin/su' as root.
 
-Aqui esta la trampa. Comandos estan definidos por su ruta completa. Tu permitiste
-a los usuarios correr cualquier comando excepto para algunos especificados por su
-ruta completa. Todo lo que necesitas es copiar el comando a otra ruta y correrlo.
+Aqui esta la trampa. Los comandos estan definidos por su ruta completa. 
+Tu permitiste a los usuarios correr cualquier comando excepto algunos 
+especificados por su ruta completa. Todo lo que necesitas es copiar el comando 
+a otra ruta y correrlo.
 
 $ cp /bin/sh /tmp/sh
 $ sudo /tmp/sh
@@ -1506,10 +1509,13 @@ $ sudo /tmp/sh
 
 Bienvenido a root.
 
+La negacion de comandos puede ser pasada por cualquiera que entienda las bases
+de sudo.
+
 Sudo logs
-Cada comando sudo es registrado/logged en /var/log/secure por syslogd. Cada mensaje
-log contiene a timestamp, a username, a terminal, the directory where the com-
-mand was run, the user the command was run as, and the command used.
+Cada comando sudo es registrado/logged en /var/log/secure por syslogd. 
+Cada mensaje log contiene a timestamp, a username, a terminal, the directory 
+where the command was run, the user the command was run as, and the command used.
 
 Apr 30 14:16:50 treble sudo: mwlucas : TTY=ttyp8 ; PWD=/home/mwlucas ;
 USER=root ; COMMAND=/usr/bin/su -m
