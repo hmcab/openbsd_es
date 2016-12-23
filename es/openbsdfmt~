@@ -1196,7 +1196,7 @@ hostname desde /etc/myname en sudoers.
 Alias de comando
 Un alias de comando es una lista de comandos. Por ejemplo necesitas un
 alias de comando que incluya todos los comandos necesarios para back up el
-sistema o restaurar un back up.
+sistema o restaurar desde un back up.
 
 Cmnd_Alias	BACKUPS = /bin/mt, /sbin/restore, /sbin/dump
 
@@ -1211,46 +1211,45 @@ Si encuentras alias de comando que incluyan /sbin/*, reconsideralo, por
 que esencialmente le estas dando al usuario acceso root ilimitado.
 
 Using aliases in /etc/sudoers
-Use un alias exactamente como lo harias normalmente con una lista de
+Use un alias exactamente como tu lo harias normalmente con una lista de
 usuarios, comandos o hostname. En el ejemplo anterior definimos el alias
 DBAs, el alias de ejecucion como APPOWNER, el alias de host DB y el alias
 de comandos APPCOMMANDS. Aqui esta como deberiamos usarlos.
 DBAs	DB=ALL
 Aqui el grupo de usuarios DBAs puede correr cualquier comando en cualquier
-servidor  del grupo DB, como cualquier usuario. Los miembros del grupo
-dueño de los servidores, y si ellos lo arruinan no es mi problema. 
-La verdad es que si ellos destrosan el servidor, yo deberia estar involucrado,
-y se convierte mi problema. Yo deberia bloquear los comandos que ellos
-pueden usar, restringiendolos a ellos solo a los comandos en APPCOMMANDS.
+servidor en el grupo DB, como cualquier usuario. Los miembros del grupo
+dueño de los servidores, y si ellos lo arruinan no es mi problema. La
+verdad es que si ellos destrosan el servidor, yo deberia estar involucrado,
+y se convierte en mi problema. Yo deberia bloquear los comandos que ellos
+pueden usar, restringiendolos a ellos a solo los comandos en APPCOMMANDS.
 Asi el grupo DBAs puede ahora correr cualquier comando de APPCOMMANDS en
 los servidores DB.
 
 DBAs	DB = APPCOMMANDS
 
-Luego descubro que los administradores de base de datos son inteligentes o mas
+Luego descubro que los administradores de base de datos son inteligentes o no
 de lo que pensaba. Ellos corren ciertos comandos de la base de datos como root,
-creando archivos log en los que el dueño es root. Los usuarios de la base de 
-datos sin privilegios como _postgresql no podran escribir en estos archivos log, 
-y asi el servidor de aplicaciones colapsara. Reparar esto requiere cambiar los
+creando archivos log en los que el dueño es root. Los usuarios de la base de datos
+sin privilegios como _postgresql no podran escribir a estos archivos log, y asi el
+servidor de aplicaciones colabsara. Reparar esto requiere cambiar los
 permisos a estos archivos, pero el admin de base de datos no tiene permiso para
 correr chown. Si les doy esta habilidad de cambiar los permisos, debo darles
 tambien acceso como root. Para evitar que esto ocurra de nuevo, restrinjo sus
-privilegios asi que ellos pueden correr sus comandos solo como usuarios de 
-aplicacion sin privilegios.
+privilegios asi ellos pueden correr sus comandos solo como usuarios de aplicacion
+sin privilegios.
 
 DBAs	DB = (APPOWNER) APPCOMMANDS
 
-Cada usuario en el grupo DBA podra correr cualquier comando de APPCOMMANDS, como
+Cada uno en el grupo DBA podra correr cualquier comandos en APPCOMMANDS , como
 cualquier usuario en APPOWNER, en cualquier servidor en DB. Yo puedo cambiar su
 acceso agregando entradas a los aliases.
-
 Sin aliases, las reglas lucirian asi:
 dwsmith,kkrush	db1,db2,db3 = (_postgresql,www) \
 /home/appowner/bin/*,/usr/local/bin/pg_*
 
-Con el mismo resultado pero con daño a la vista cuando sean en verdad grandes. 
-El objetivo perseguido aqui es brindar mayor seguridad al no dar la contraseña 
-de root a los administradores.
+Con el mismo resultado pero con daño a la vista cuando sean en
+verdad grandes. El objetivo perseguido aqui es brindar mayor seguridad
+al no dar la contraseña de root a los administradores.
 
 Anidacion de aliases
 Puedes incluir aliases en aliases. Aqui combino dos aliases de usuario dentro
@@ -1258,9 +1257,9 @@ de un unico alias para los administradores de aplicaciones.
 User_Alias = APPADMINS = DBAs, WEBMASTERS
 
 Convencion en el nombramiento de alias
-Es tradicional, dar los nombres de aliases en letra capital para ayudarlos a 
-diferenciar de los usuarios, hosts y demas. Y aunque es una entrada valida es 
-mejor evitar nombrar aliases de usuarios o hosts. aqui un ejemplo.
+Es tradicional, dar los nombres de aliases en letra capital para ayudarlos a di-
+ferenciar de los usuarios, hosts y demas. Y aunque es una entrada valida es mejor
+evitar nombrar aliases de usuarios o hosts. aqui un ejemplo.
 
 User_Alias	MWLUCAS	= mwlucas,pkdick,sbaxter,dwsmith
 Esto podria conducirme rapidamente.
@@ -1275,7 +1274,7 @@ Host_Alias	DB = db1,db2,db3
 Cmnd_Alias	DB = /usr/local/bin/pg_*, /home/appowner/bin/*
 DB	DB = (DB) DB
 
-Si haces esto, cualquiera quien deba mantener tu configuracion sudo, maldecira
+Si haces esto, cualquiera quien deba debug tu configuracion sudo, maldecira
 tu nombre. Este esquema hara que tu celular suene varias veces.
 
 Cambiando el comportamiento por defecto de sudo
@@ -1288,14 +1287,14 @@ Password:
 My pet rat cant type better than you!
 Password:
 
-Al ingresar 3 veces mal la contraseña a sudo, el cierra.
+Al ingresar 3 veces mal la contraseña a sudo, el  cierra.
 
 Para desactivar los insultos incluimos la sgte linea a sudoers.
 Defaults !insults
 
 La declaracion Defaults indica que el sgte item afecta a uno o mas sudo 
 defaults. La opcion insults controla la insultacion al usuario. El caracter
-de exclamacion ! lo niega. Ahora el sistema no insultara.
+de exclamasion ! lo niega. Ahora el sistema no insultara.
 
 $ sudo -l
 Password:
@@ -1304,7 +1303,7 @@ Password:
 
 Reemplazando Default por host
 Se puede reemplazar los defaults por-host usando el simbolo @ despues de Default
-y darle ambos host o host alias. Aqui, queremos insultar a usuarios quienes
+y darle a ambos host o host alias. Aqui, queremos insultar a usuarios quienes
 no pueden tipar su contraseña en caddis o en una maquina en el alias APPSERVERS,
 mientras se dejan los mensajes deshabilitados para todos los otros servidores.
 
@@ -1345,9 +1344,9 @@ Defaults<APPOWNER insults
 Si un usuario corre un comando como _postgresql o cualquier otro usuario en
 APPOWNER run as alias, y tipea su contraseña incorrectamente, el sera insultado.
 
-En el resto de este capitulo usaremos Defaults profundamente. Asuma que cada 
-seccion incluye el texto "Restrinja esto como sea necesario por usuario, host, 
-command o run as".
+En el resto de este capitulo usaremos Defaults profundamente. Asuma que cada seccion
+incluye el texto "Restrinja esto como sea necesario por usuario, host, command o
+run as".
 
 Sudo y el entorno 
 
