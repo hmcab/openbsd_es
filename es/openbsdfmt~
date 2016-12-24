@@ -1461,8 +1461,8 @@ sbaxter		dns1=/etc/rc.d/named,/sbin/mount_nfs, \
 		sudoedit /etc/named.conf, /etc/rndc.key
 
 sudoedit es seguido por una lista de archivos que el usuario puede editar, 
-permitiendole a el modificarlos sin privilegios root, lo hace pasandole el nombre
-del archivo a sudoedit.
+permitiendole a el modificarlos sin privilegios root, lo hace pasandole el 
+nombre del archivo a sudoedit.
 
 $ sudoedit /etc/named.conf
 
@@ -1470,7 +1470,8 @@ sudoedit copia el archivo a un archivo temporal en que el dueño es el usuario,
 y cuando el usuario cierra el editor, este copia el archivo temporal a la
 ubicacion original. El usuario nunca corre el editor como root. sudoedit usa el
 editor dado a variables de entorno $SUDO_EDITOR, $VISUAL o $EDITOR. Usuarios
-pueden establecer esa variable si no quieren que el sistema ofrezca una por ellos.
+pueden establecer esa variable si no quieren que el sistema ofrezca una por 
+ellos.
 
 El gran error de sudo: Exclusiones
 
@@ -1484,7 +1485,7 @@ ganar acceso root si lo usas.
 
 Iniciamos definiendo los alias de comando que contienen aquellos comandos
 prohibidos. Uno es su, como tambien las shell de usuario, ya que si ejecutas
-una shell como un usuario, tu te convertiras a ese usuario.
+una shell como un usuario, tu te convertiras en ese usuario.
 
 Cmnd_Alias SHELLS = /bin/sh,/bin/csh,/usr/local/bin/tcsh
 Cmnd_Alias SU = /usr/bin/su
@@ -1497,9 +1498,10 @@ $ sudo sh
 ...
 Sorry, user pkdick is not allowed to execute '/usr/bin/su' as root.
 
-Aqui esta la trampa. Comandos estan definidos por su ruta completa. Tu permitiste
-a los usuarios correr cualquier comando excepto para algunos especificados por su
-ruta completa. Todo lo que necesitas es copiar el comando a otra ruta y correrlo.
+Aqui esta la trampa. Los comandos estan definidos por su ruta completa. 
+Tu permitiste a los usuarios correr cualquier comando excepto algunos 
+especificados por su ruta completa. Todo lo que necesitas es copiar el comando 
+a otra ruta y correrlo.
 
 $ cp /bin/sh /tmp/sh
 $ sudo /tmp/sh
@@ -1507,10 +1509,13 @@ $ sudo /tmp/sh
 
 Bienvenido a root.
 
+La negacion de comandos puede ser pasada por cualquiera que entienda las bases
+de sudo.
+
 Sudo logs
-Cada comando sudo es registrado/logged en /var/log/secure por syslogd. Cada mensaje
-log contiene a timestamp, a username, a terminal, the directory where the com-
-mand was run, the user the command was run as, and the command used.
+Cada comando sudo es registrado/logged en /var/log/secure por syslogd. 
+Cada mensaje log contiene a timestamp, a username, a terminal, the directory 
+where the command was run, the user the command was run as, and the command used.
 
 Apr 30 14:16:50 treble sudo: mwlucas : TTY=ttyp8 ; PWD=/home/mwlucas ;
 USER=root ; COMMAND=/usr/bin/su -m
@@ -1556,14 +1561,14 @@ La capa enlace de datos es la que corre sobre la capa fisica. Este transforma
 la informacion actual en señales que son enviadas sobre la capa fisica,
 usando la apropiada codificacion para el medio fisico, como sigue:
 
-+ Ambos Ethernet y Switched Multimegabit Data Service (SMDS) usa direcciones
++ Ambos Ethernet y Switched Multimegabit Data Service (SMDS) usan direcciones
 Media Access Control (MAC) y el protocolo Address Resolution Protocol (ARP).
 + IPv6 sobre Ethernet usa Neighbor Discovery (ND).
-+ Diap-up y WANs usa ya sea Point-to-Point Protocol (PPP) o HighLevel Data Link
++ Dial-up y WANs usa ya sea Point-to-Point Protocol (PPP) o HighLevel Data Link
 Control (HDLC).
 
-OpenBSD soporta otros protocolos de enlace de datos, si es uno inusual verifica
-en verifica que sea soportado. Algunas capas de enlace han sido implementados
+OpenBSD soporta otros protocolos de enlace de datos, si es uno inusual verifica 
+que sea soportado. Algunas capas de enlace han sido implementados
 sobre diferentes capas fisicas, por ejemplo, Ethernet ha sido implementado sobre
 twinax, coax, CAT3,5,6,7, fibra-optica y ondas de radio. Con los minimos cambios
 a los device drivers, la capa de enlace puede direccionar cualquier clase de
@@ -1573,7 +1578,7 @@ La capa de enlace intercambia informacion con la capa fisica y la capa de red.
 
 The Network Layer
 Es la parte que mapea la conectividad entre los nodos la red, respondiendo 
-preguntas como donde esta el otro host? y puedo llegar alla desde aqui?.
+preguntas como ¿donde esta el otro host? y ¿puedo llegar alla desde aqui?.
 Este protocolo logico provee una interfaz consistente para que los programas
 corran sobre la red sin importar como la capa de enlace de datos y fisica
 luzcan.
@@ -1670,7 +1675,7 @@ $ ifconfig fxp0
     inet 192.0.2.226 netmask 0xfffffff0 broadcast 192.0.2.239
     inet 192.0.2.231 netmask 0xffffffff
 ...
-Las lineas que inician con inet son direcciones IPv6. Esta interface tiene la
+Las lineas que inician con inet son direcciones IPv4. Esta interface tiene la
 direccion primaria IPv4 de 192.0.2.226 y una secundaria, o alias 192.0.2.231.
 Puedes ver la mascara de cada direccion y la direccion de broadcast para la 
 subred.
@@ -1695,7 +1700,7 @@ aunque no es necesario saber todos, hay dos grupos que se veran muy a menudo,
 para una lista completa de subredes IPv4 reservadas ver RFC 5735 y 6598.
 
 Localhost
-Direccion 127.0.0.1/8 estÃ¡ asignada a localhost, una direccion de maquina para
+Direccion 127.0.0.1/8 esta asignada a localhost, una direccion de maquina para
 si misma (interfaz loopback). Paquetes para o desde 127.0.0.1/8 nunca deberian
 cruzar la red, del mismo modo, los demonios asociados a 127.0.0.1/8 pueden ser
 accedidos solo en la maquina local.
@@ -1713,12 +1718,12 @@ Trampas del direccionamiento IPv4
 El sentido comun dicta un solo equipo, una sola interfaz de red, una sola
 direccion IP.
 No siempre, algunas interfaces de proposito especial (tales como aquellos 
-dedicados al packet sniffing) funcionan de la forma prevista sin una
-direccion IP, y cualquier sistema operativo permitira asignar multiples direcciones
-IP a una interfaz de red a traves del proceso llamado aliasing. Tambien puedes
-enlazar multiples tarjetas fisicas a una interfaz de red, dandole al equipo una
-gran interfaz virtual. Es bueno tenerlo en cuenta aunque no te encontraras con
-esto diariamente.
+dedicados al packet sniffing) funcionan de la forma prevista sin una 
+direccion IP, y cualquier sistema operativo permitira asignar multiples 
+direcciones IP a una interfaz de red a traves del proceso llamado aliasing. 
+Tambien puedes enlazar multiples tarjetas fisicas a una interfaz de red, dandole 
+al equipo una interfaz virtual. Es bueno tenerlo en cuenta aunque no te 
+encontraras con esto diariamente.
 
 IPv6 Direcciones y subredes
 IPV4 ofrece 4294 millones de direcciones, menos que una direccion por cada ser
@@ -1729,32 +1734,32 @@ IPv6.
 
 IPv6
 IPv6 usa direcciones de 128bits, expresados como seis grupos de cuatro caracteres
-hexadecimales separados por dospuntos : (2001:db8:0:bad:c0de:cafe). Un espacio de
-direcciones de 128bits es suficiente para que cada atomo en la tierra tenga mas de
-10 direcciones IP. TCP,UDP,ICMP y otros protocolos corren encima de este. IPv6
-tiene su propia capa 2 de protocolo, Neighbor Discovery, el cual reemplaza
+hexadecimales separados por dos puntos : (2001:db8:0:bad:c0de:cafe). Un espacio 
+de direcciones de 128bits es suficiente para que cada atomo en la tierra tenga 
+mas de 10 direcciones IP. TCP,UDP,ICMP y otros protocolos corren encima de este. 
+IPv6 tiene su propia capa 2 de protocolo, Neighbor Discovery, el cual reemplaza
 protocolos como Ethernet ARP.
 Todo es casi igual a como venias trabajando para IPv4, usas una direccion IP, un
-gateway por defecto, routers y su tabla de enrutamiento y puedes casi en todos los
-casos sustituir una direccion IPv4 en una IPv6 y ver que todo trabaja. Un servidor
-web no toma cuidado de si este esta enlazado al puerto 80 sobre 192.0.2.13 o sobre
-2001:db8:0:bad:c0de:cafe. El servidor debe ser capaz de tratar con conexiones desde
-ambas direcciones.
+gateway por defecto, routers y su tabla de enrutamiento y puedes casi en todos 
+los casos sustituir una direccion IPv4 en una IPv6 y ver que todo trabaja. 
+Un servidor web no toma cuidado de si este esta enlazado al puerto 80 sobre 
+192.0.2.13 o sobre 2001:db8:0:bad:c0de:cafe. El servidor debe ser capaz de 
+tratar con conexiones desde ambas direcciones.
 
 Entendiendo las direcciones IPv6
 Las direcciones IPv6 son expresadas con seis grupos de cuatro caracteres
-hexadecimales separados por dospuntos. Tal como en IPv4 nos deshacemos de
+hexadecimales separados por dos puntos. Tal como en IPv4 nos deshacemos de
 los ceros a la izquierda, es decir 192.0.2.13 en vez de 192.000.002.013.
 Ocurre igual para IPv6 en vez de 2001:db8:0000:0bad:c0de:cafe podemos usar
-2001:db8:0:bad:c0de:cafe. IPv6 tienen a menudo largas cadenas de ceros. Esto
+2001:db8:0:bad:c0de:cafe. IPv6 tiene a menudo largas cadenas de ceros. Esto
 tiene que ver con las subredes. Pero lo que debemos saber, es que una cadena
-de ceros consecutivos se puede reemplazar con :: (doble dospuntos). Es decir
+de ceros consecutivos se puede reemplazar con :: (doble dos puntos). Es decir
 2600:0:0:0:0:aaaa en 2600::aaaa. Esto lo puedes hacer solo una vez por 
 direccion. Algo que resulta en error es hacer esta simplificacion en 
 direcciones como 2600::1::1 porque es ambiguo y podria representar tanto
 2600:0:0:1:0:1 o 2600:0:1:0:0:1, y no sabre cual es y tampoco el servidor.
 Finalmente en muchos casos las direcciones tendran asociadas un puerto, para
-evitar confuciones de si es parte de la direccion IPv6 o el puerto debemos
+evitar confuciones de si es parte de la direccion IPv6 o es el puerto debemos
 encerrar la direccion en corchetes. Como [2001:db8::bad:c0de:cafe]:80.
 
 Viendo direcciones IPv6
@@ -1772,7 +1777,7 @@ enlace local" mas abajo.
 
 Subredes IPv6
 A diferencia de IPv4 donde estableces una subred en cualquier bit, en IPv6
-usualmente se hace en los limites de los dospuntos. Los dospuntos aparecen
+usualmente se hace en los limites de los dos puntos. Los dos puntos aparecen
 cada 16 bits, asi que las subredes naturalmente son /16 /32 /48 y /64. Aunque
 el estandar IPv6 recomienda usar /64 como la red mas pequeña posible, muchos
 utilizan redes de /80, /96, y /112 para propositos especiales. (Tambien se ha
@@ -1800,7 +1805,7 @@ interfaz. Cada enlace tiene una direccion de enlace local que es valida solo
 en una red local especifica. Incluso si una red IPv6 no tiene router, el host
 local atado a una red puede encontrar a cada otro y comunicarse usando las
 direcciones locales. Estas redes son siempre subredes de /64. Tu veras subredes
-Iá¹”v6 identicas en otras interfaces y en otras redes completamente desconectadas
+IPv6 identicas en otras interfaces y en otras redes completamente desconectadas
 de tu red, y eso esta bien. Estas direcciones son locales a el enlace. Por
 ejemplo, aqui la direccion de enlace local en una maquina OpenBSD.
 
@@ -1812,14 +1817,14 @@ en cualquier otra interfaz en la maquina. Si tu maquina tiene una interfaz
 fxp1, y un host en esa red intenta alcanzar la direccion fe80::bad:code:cafe,
 esta maquina no respondera. Esta direccion particular es valida solo para la
 red atada a la interfaz fxp0.
-Debes notar que las direcciones de enlace local tiene una seccion en comun con 
+Debes notar que las direcciones de enlace local tienen una seccion en comun con 
 una direccion IPv6 publica en esta red. Eso es porque una IPv6 autoconfigurada
 es usualmente calculada desde la direccion de interfaz fisica; Esto no importa
 si la direccion autoconfigurada es una direccion publica o una direccion de
 enlace local.
 
 Asignando direcciones IPv6
-Clientes de IPv6 pueden usualmente usar autoconfiguracion a traves de
+Los clientes de IPv6 pueden usualmente usar autoconfiguracion a traves de
 router discovery, un protocolo IPv6 donde los routers anuncian su presencia
 en la red y legitimizan direcciones a los clientes. Desafortunadamente,
 IPv6 no soporta opciones comunes DHCP Dynamic Host Configuration Protocol,
