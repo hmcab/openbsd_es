@@ -1857,14 +1857,14 @@ Mientras algunas personas reclaman que ICMP debe ser bloqueado por razones de
 seguridad, aquellas personas no entienden que ICMP es solo un variado tal como
 TCP o UDP. Redes IPv4 con rendimiento adecuado requieren largos trozos de ICMPv4.
 Si debes bloquear ICMPv4 por razones de seguridad, hazlo de forma selectiva.
-Por ejemplo, bloquear la fuente de los mensajes, se rompe la ruta de unidad
+Por ejemplo, bloquear la fuente de los mensajes, rompe la ruta de unidad
 de transmision maxima MTU en el descubrimiento, lo cual nos conduce a un mundo
 de dolor. Si no entiendes esto ultimo no bloquees ICMPv4.
 IPv6 muere sin ICMPv6, ya que IPv6 no soporta fragmentacion de paquetes, asi
 que nunca bloquees ICMPv6.
 
 UDP
-Es el protocolo mas puro-hueso de transferencia de datos que correo sobre IP.
+Es el protocolo mas puro-hueso de transferencia de datos que corre sobre IP.
 Este no ofrece manejo de errores, minima verificacion de integridad, y ninguna
 defensa en absoluto para los datos perdidos. El protocolo de transporte 
 considera cada paquete UDP completamente autonomo. No hay chequeo de coherencia
@@ -1879,16 +1879,16 @@ Cuando un host transmite datos via UDP, no hay forma de saber si los datos
 alcanzaron su destino. Programas que reciben datos UDP solo escuchan en la red
 y aceptan cualquier cosa que llegue. Cuando un programa recibe datos via UDP,
 este no verifica la fuente de esos datos. Aunque cada paquete UDP incluye una
-direccion fuente, esta direccion es facilmente facilficada. Cada paquete UDP
+direccion fuente, esta direccion es facilmente falcificada. Cada paquete UDP
 incluye un checksum para el paquete, pero no hay chequeo de integridad para la
 secuencia de datos como un todo. Esto es el por que UDP es llamado sin-conexion
 connectionless o sin-estado stateless.
 
-Sin chequeo de integridad, sin garantia en contra de perdida de datos, potencial
+Sin chequeo de integridad, sin garantia contra perdida de datos, alto potencial
 para paquetes falsificados - todo suena mal, asi por que usar UDP?.
 Aplicaciones basadas en UDP a menudo tienen sus propios metodos de correccion de
 errores o de otra forma no encajarian bien con protocolos mas confiables como
-TCP. Por ejemplo una simple consulta DNS deberia tener una tiempo de espera de
+TCP. Por ejemplo una simple consulta DNS deberia tener un tiempo de espera de
 unos pocos segundos o los usuarios enloquecerian. Las conexiones TCP tienen un
 tiempo de espera de hasta dos minutos. DNS requiere fallos rapidos y un solo
 paquete por transmision, el cual hace a UDP una mejor opcion que TCP para 
@@ -1910,14 +1910,14 @@ Esto hace al protocolo TCP orientado a conexion o stateful.
 TCP tambien es un protocolo de flujo streaming protocol, lo que significa que
 una unica peticion puede ser dividida en multiples paquetes de red. Mientras el
 emisor transmite multiples trozos de datos uno despues de otro, esos datos 
-podrian llegar fueran de orden o fragmentados. El receptor debe rastrear estos
+podrian llegar fuera de orden o fragmentados. El receptor debe rastrear estos
 trozos y ensamblarlos apropiadamente para completar la transaccion de la red.
 Para que los hosts intercambien datos a traves de TCP, ellos deben establecer
 un canal para que los datos fluyan a traves de ella. Un host solicita una
 conexion, el otro host responde a esa peticion, y luego el primer host inicia la
 transmision. Esa configuracion o forma de proceder se conoce como three-way
-handshake. Similarmente cuando una conexion es completada, los sistemas deben
-hacer cierto trabajo para derribar las conexiones.
+handshake/negociacion en tres pasos. Similarmente cuando una conexion es 
+completada, los sistemas deben hacer cierto trabajo para derribar las conexiones.
 Para comprobar si un puerto esta abierto, puedes usar telnet o nc para 
 conectarse a ese puerto. Aqui, nos conectamos al puerto 22 en el host caddis.
 
@@ -1943,8 +1943,8 @@ gemelos usando un banco de piano NAT). ICMP provee informacion basica de la
 capa baja tal como "El camino mas rapido a las patatas es que el tio Mike las
 pase" o "la tia Liz no puede levantar el plato de jamon". TCP es donde tu das la
 mantequilla a alguien y la otra persona debe decir gracias antes de que la dejes
-ir. UDP es como tossing a roll at Grandma Lucas; she might catch it or it might
-bounce off her forehead.
+ir. UDP es como lanzar un rollo a la abuela Lucas; ella lo podria atrapar o
+rebotar en su frente.
 
 Transport protocol ports
 Los puertos del protocolo de transporte permite a un servidor servir muchos
@@ -1957,12 +1957,12 @@ Cada paquete TCP o UDP que llega a un sistema arrastra un campo que contiene el
 numero de puerto destino deseado. Si un paquete entrante pregunta por el puerto
 25, este es conectado al servidor de correo que corre en ese puerto. Esto 
 significa que los otros programas corren en otros puertos, los clientes pueden
-hablar con aquellos diferentes puertos, y no estar confundidos.
+hablar con aquellos diferentes puertos, y no estar confundidos excepto tu.
 Note que la asignacion de puertos no tiene un orden fisico constante, en su 
 lugar solo se ha convenido. No hay razon para que el servicio de correo deba
 correr sobre el puerto 25 mas que el hecho de que todos han estado de acuerdo de
-que asi deberia. Si alguien intenta enviar un correo, su servidor de correo se
-conectara automaticamente al puerto 25 en su servidor. Si alguien corre un
+que asi deberia. Si alguien intenta enviarte un correo, su servidor de correo se
+conectara automaticamente al puerto 25 en tu servidor. Si alguien corre un
 correo en el puerto 80 y tiene un servidor web en el puerto 25, tu nunca tendras
 tu correo y tu servidor web no tendra mucho trafico.
 
@@ -1998,11 +1998,11 @@ quieres interoperar con otros sitios, no deberias cambiarlos.
 El software OpenBSD enlaza a los puertos reservados como root y luego arrastra
 los privilegios, cumpliendo el resto de las funciones como un usuario no
 privilegiado.
-Si corres un servicio que enlaza a un puerto reservado y este puede correr solo
-como root, considera si realmente lo necesitas. Intenta encontrar un servidor
-alternativo que haga la separacion de privilegios. Si no puedes, al menos
-instala ese servicio en una maquina dedicada para reducir su amenaza a otros
-servicios en la red.
+Si debes correr un servicio que se enlace a un puerto reservado y este solo
+puede correr como root, considera si realmente lo necesitas. Intenta encontrar 
+un servidor alternativo que haga la separacion de privilegios. Si no puedes, 
+al menos instala ese servicio en una maquina dedicada para reducir su amenaza a 
+otros servicios en la red.
 
 Which ports are open?
 Los servicios de red estan disponibles via puertos TCP o UDP. Los programas
@@ -2036,7 +2036,7 @@ muestran el numero de bytes que el sistema esta en proceso de recibir o enviar.
 La columna Local Address muestra la direccion IP atada a la maquina local donde
 el socket esta escuchando. Por lo general un servicio se enlaza a un puerto
 en una sola direccion en una maquina. Si el puerto es parte de una conexion
-actual, la direccion IP es siguida por el numero del puerto como en
+actual, la direccion IP es seguida por el numero del puerto como en
 192.0.2.135.22, donde la conexion tcp esta atada al puerto 22, reservado para
 SSH. Asi que probablemente exista una conexion ssh.
 Si Local Address es un asterisco seguido por un numero de puerto, es un enlace
