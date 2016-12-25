@@ -1305,7 +1305,7 @@ Password:
 Reemplazando Default por host
 Se puede reemplazar los defaults por-host usando el simbolo @ despues de Default
 y darle ambos host o host alias. Aqui, queremos insultar a usuarios quienes
-no pueden tipar su contraseña en caddis o en una maquina en el alias APPSERVERS,
+no pueden tipar su contraseña en caddis o las maquinas en el alias APPSERVERS,
 mientras se dejan los mensajes deshabilitados para todos los otros servidores.
 
 Defaults !insults
@@ -1313,14 +1313,14 @@ Defaults@caddis insults
 Defaults@APPSERVERS insults
 
 Reemplazando Defaults por usuario
-Para cambiar sudo defaults por-usuario, usamos % y el usuario o usuario alias.
+Para cambiar sudo defaults por-usuario, usamos % y el usuario o alias de usuario
 
 Defaults !insults
 Defaults%lasnyder insults
 Defaults%DBAs insults
 
-No importa donde lasnyder se loguee - voy a insultarlo, tan bien para usuarios en
-DBA alias. 
+No importa donde lasnyder se loguee - voy a insultarlo, tan bien para usuarios 
+en el alias DBA.
 
 Reemplazando Defaults por comando
 Tambien se puede cambiar el comportamiento de sudo por comando poniendo un
@@ -1334,9 +1334,9 @@ Cualquiera que intente usar newfs o fsck y no pueda tipar su contraseña sera
 insultado.
 
 Reemplazando Defaults por Run as
-Por ultimo, puedes cambiar sudo defaults basado en el comando de se ejecuta como
-(run as). Usamos un < para indicar el cambio de comportamiento para un run as
-alias.
+Por ultimo, puedes cambiar sudo defaults basado en el comando que se ejecuta 
+como (run as). Usamos un < para indicar el cambio de comportamiento para un 
+run as alias.
 
 Defaults !insults
 Defaults<_postgresql insults
@@ -1351,22 +1351,23 @@ command o run as".
 
 Sudo y el entorno 
 
-Ciertas variables de entorno pueden causar problemas. Por ejemplo $HOME es una de
-ellas. Un usuario no puede crear archivos en otro directorio home de otros usuarios.
-Otra como LD_LIBRARY_PATH puede causar molestias interminables, asi como problemas
-de seguridad, ya que las aplicaciones tratan de enlazarse con bibliotecas equivocadas.
-Sudo puede remover variables de entorno sospechosas, resetear completamente el
-entorno del usuario, o ser configurado para preservar el entorno original del
-usuario. La variable env_reset sudoers es puesta por defecto. Esto limpia todas 
-las variables de entorno excepto LOGNAME, SHELL, USER, USERNAME y cualquier cosa 
-que inicie con SUDO_. Puedes cambiar este comportamiento deshabilitando 
-env_reset, pero recomiendo encarecidamente contra la deshabilitacion la
-depuracion del entorno.
+Ciertas variables de entorno pueden causar problemas. Por ejemplo $HOME es una 
+de ellas. Un usuario no puede crear archivos en otro directorio home de otros 
+usuarios.
+Otra como LD_LIBRARY_PATH puede causar molestias interminables, asi como 
+problemas de seguridad, ya que las aplicaciones tratan de enlazarse con 
+bibliotecas equivocadas. Sudo puede remover variables de entorno sospechosas, 
+resetear completamente el entorno del usuario, o ser configurado para preservar 
+el entorno original del usuario. La variable env_reset sudoers es puesta por 
+defecto. Esto limpia todas las variables de entorno excepto LOGNAME, SHELL, 
+USER, USERNAME y cualquier cosa que inicie con SUDO_. Puedes cambiar este 
+comportamiento deshabilitando env_reset, pero recomiendo encarecidamente contra 
+la deshabilitacion la depuracion del entorno.
 
-En lugar de dejar a los usuarios llevar ciegamente la basura al azar en su entorno
-junto con ellos, crear una lista de variables de entorno necesarias y seguras que
-puedan conservar. Veras ejemplos de archivos sudoers en OpenBSD usando la opcion
-keep_env.
+En lugar de dejar a los usuarios llevar ciegamente la basura al azar en su 
+entorno junto a ellos, crear una lista de variables de entorno necesarias y 
+seguras que puedan conservar. Veras ejemplos de archivos sudoers en OpenBSD 
+usando la opcion env_keep.
 
 Defaults env_keep +="DESTDIR DISTDIR EDITOR FETCH_CMD FLAVOR FTPMODE GROUP MAKE"
 Defaults env_keep +="MAKECONF MULTI_PACKAGES NOMAN OKAY_FILES OWNER PKG_CACHE"
@@ -1394,7 +1395,7 @@ sudoers, permitiendo a los miembros de wheel acceder a todos los comandos.
 %wheel ALL=(ALL) SETENV: ALL
 
 Como usuario de wheel, puedes chequear tus permisos sudo.
-$ sudo -l // Especifica contraseña tuya, no de root.
+$ sudo -l // Especifica la contraseña tuya, no de root.
 Password:
 
 Matching Defaults entries for mwlucas on this host:
@@ -1513,16 +1514,17 @@ La negacion de comandos puede ser pasada por cualquiera que entienda las bases
 de sudo.
 
 Sudo logs
-Cada comando sudo es registrado/logged en /var/log/secure por syslogd. 
-Cada mensaje log contiene a timestamp, a username, a terminal, the directory 
-where the command was run, the user the command was run as, and the command used.
+Cada comando sudo es registrado en /var/log/secure por syslogd. 
+Cada mensaje log contiene a fecha, usuario, un terminal, directorio donde el
+comando fue ejecutado, usuario solicitado (comando finalmente ejecutado por),
+y el comando usado
 
 Apr 30 14:16:50 treble sudo: mwlucas : TTY=ttyp8 ; PWD=/home/mwlucas ;
 USER=root ; COMMAND=/usr/bin/su -m
 
 Chequear el archivo secure, puede rastrear quien hizo que y cuando.
-(Send your syslog messages to a logging server that your users cannot access to
-prevent those who screw up from deleting the logs of their screwup.)
+(Envia los mensajes syslog a un servidor que tus usuarios no puedan acceder
+para prevenir de aquellos quienes eliminan los logs de sus desastres).
 
 May 15 09:14:55 treble sudo: lasnyder : TTY=ttyp4 ; PWD=/etc ; USER=root ;
 COMMAND=/bin/rm pf.conf
@@ -2151,8 +2153,8 @@ expresamente juzgado como necesario. Lo hace, sin embargo permite conexiones
 entrantes a hosts en DMZ. Los hosts en la DMZ son hasta cierto punto vulnerables.
 Ellos no son lo suficiente confiables para estar en la red interna. Tu sistema
 de deteccion de intrusos o tus servidores web deben alojarse aqui.
-El firewall interno, tal como el interno, permite solo trafico juzgado como
-necesario para los propositos de la organizacion. Es posible que no se permite
+El firewall interno, al igual que el externo, permite solo trafico juzgado como
+necesario para los propositos de la organizacion. Es posible que no se permita
 ninguna conexion desde afuera, sin embargo, tampoco confia en los hosts de
 DMZ.
 Solo hosts altamente confiables son permitidos en la red interna. Aqui es donde
@@ -2175,7 +2177,7 @@ enrutamiento.
 Similarmente, puedes configurar el enrutamiento en cada host dentro de la DMZ.
 En ese caso, desvios ICMP desde el firewall podria proveer enrutamiento para
 estos hosts, pero confiar en desvios ICMP en una red vulnerable es imprudente y
-sucio por que este asume que cada host en la DMZ y cada firewall acepta y envia
+sucio, por que este asume que cada host en la DMZ y cada firewall acepta y envia
 desvios ICMP (ICMP redirects). Si quieres un OpenBSD seguro, configura un
 enrutamiento en sus sistemas DMZ.
 
@@ -2263,7 +2265,7 @@ La ultima ruta en [6] es para el rango de direcciones multicast 224/8. Si no
 estas usando multicast, esta deberia ir al local host.
 
 Route flags
-La columna de Flags en la tabla de enrutamiento indica como las rutas son
+La columna Flags en la tabla de enrutamiento indica como las rutas son
 generadas o usadas. netstat contiene una lista completa de flags de rutas.
 En la siguiente tabla listamos algunas que son comunes.
 
@@ -2285,8 +2287,10 @@ mascara y la pasarela.
 
 # route add address-block/netmask netmask gateway
 
-En nuestra red de ejemplo, el otro firewall necesita una ruta para alcanzar la
-red privada, 192.0.2.128/25. Para enrutar esta red al firewall interior en
+Internet -- 192.0.2.1 -- {DMZ 192.0.2.0/25} -- 192.0.2.2 -- {Interna 192.0.2.128/25}
+
+En nuestra red de ejemplo, el firewall externo necesita una ruta para alcanzar 
+la red privada, 192.0.2.128/25. Para enrutar esta red al firewall interior en
 192.0.2.2, corre este comando.
 
 # route add -net 192.0.2.128/25 192.0.2.2
