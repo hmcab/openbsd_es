@@ -2338,7 +2338,7 @@ local virtuales (VLANS).
 DNS resolution
 Tu probablemente quieras usar hostnames en lugar de direcciones IP, asi que
 sea posible navegar a http://www.cnn.com en lugar de http://157.166.255.18.
-Los sistemas como unix usan un resolver para lograr esta hazaña.
+Los sistemas como unix usan un resolvedor para lograr esta hazaña.
 La mayoria de los hosts usan dos herramientas para mapear entre direcciones IP 
 y hostnames: El host file y DNS. (Otros sistemas operativos soportan servicios
 de nombre adicionales, como YP, LDAP, NIS. Pero por lo general se soportan 
@@ -2347,20 +2347,20 @@ El archivo hosts es un archivo de texto en la maquina local que contiene una
 direccion IP estatica y una lista de hostnames. DNS es mas un servicio dinamico
 que atraviesa la red para encontrar informacion. Puedes especificar servidores
 DNS por su direccion IP, pero miraremos el archivo hosts con mas detalle.
-Que si prefieres direcciones IPv4 o IPv6? o quieres que el archivo hosts anule
+¿Que si prefieres direcciones IPv4 o IPv6? o ¿quieres que el archivo hosts anule
 el DNS? Quizas tu tienes un dominio por defecto que tus consultas deberian
-usar. El resolver busca ya sea hasta que encuentra la primera respuesta o agota
-sus fuentes de informacion, asi que estas preguntas importan. Especifique a 
-su resolver sus necesidades en /etc/resolv.conf.
+usar. El resolvedor busca ya sea hasta que encuentra la primera respuesta o 
+agota sus fuentes de informacion, asi que estas preguntas importan. 
+Especifique a su resolvedor sus necesidades en /etc/resolv.conf.
 
 The /etc/resolv.conf file
-Configuras el comportamiento del resolver en /etc/resolv.conf. Un sistema sin
+Configuras el comportamiento del resolvedor en /etc/resolv.conf. Un sistema sin
 /etc/resolv.conf puede encontrar solo hostnames listados en el archivo hosts.
 Debido a que el archivo hosts comienza vacio, es probableblemente lo que tu no
 quieres. Inicia especificando nombres de dominio.
 
 Default search domains
-Si quieres hacer ping a un host en una red remota, tu esperarios tener que
+Si quieres hacer ping a un host en una red remota, tu esperarias tener que
 especificar el dominio completo. Entrando ping www.openbsd.org deberia trabajar.
 Pero si quieres hacer ping al servidor de tu compañia, podria tener mas sentido
 solo tipear ping www. Y lo puedes hacer, debido a que OpenBSD permite 
@@ -2371,7 +2371,7 @@ clave del dominio en /etc/resolv.conf como.
 
 domain michaelwlucas.com
 
-Ahora cuando yo ingreso ping ftp, el resolver deberia obtener la direccion IP
+Ahora cuando yo ingreso ping ftp, el resolvedor deberia obtener la direccion IP
 del host ftp.michaelwlucas.com.
 
 Si tienes mas de un dominio local, usa la palabra clave search y una lista de
@@ -2379,8 +2379,8 @@ dominios como.
 
 search michaelwlucas.com openbsd.org
 
-Si ingreso ping ftp ahora, el resolver deberia obtener la IP del host
-ftp.michaelwlucas.com. Una vez que el resolver aprende que ese host no existe,
+Si ingreso ping ftp ahora, el resolvedor deberia obtener la IP del host
+ftp.michaelwlucas.com. Una vez que el resolvedor aprende que ese host no existe,
 este chequeara para ftp.openbsd.org. Debido a que el host existe, ping empezara
 a funcionar. La palabra search puede tener hasta 6 dominios, y no puede ser
 mas grande que 1024 caracteres.
@@ -2394,12 +2394,12 @@ search cnn.com openbsd.org
 search sluggy.com michaelwlucas.com
 domain blackhelicopters.org
 
-Tu podrias deshacerte de las dos declaraciones search. El resolver jamas ira
+Tu podrias deshacerte de las dos declaraciones search. El resolvedor jamas ira
 a traves de esta lista de dominios; este solo usara la lista domain debido a
 que es la ultima.
 
 Name servers
-Ahora que el resolver sabe cuales dominios chequear por defecto, debemos 
+Ahora que el resolvedor sabe cuales dominios chequear por defecto, debemos 
 decirle a este que servidor de nombres usar. Listar cada servidor de nombres
 en su propia linea, por direccion IP, en orden de preferencia.
 
@@ -2409,18 +2409,18 @@ nameserver 2001:db8::5
 
 Puedes listar hasta tres servidores de nombres, por IP. (Hostnames en la entrada
 nameserver no funciona, por razones obvias). Si tu resolv.conf no lista un
-servidor de nombres, el resolver deberia chequear para un servidor de nombres
+servidor de nombres, el resolvedor deberia chequear para un servidor de nombres
 en la maquina local.
 
 Lookup Order
 Tu podrias obtener informacion desde el DNS o desde el archivo hosts.
-El resolver deberia detenerse una vez encuentra una respuesta a la consulta.
+El resolvedor deberia detenerse una vez encuentra una respuesta a la consulta.
 Si chequeas el archivo hosts y luego el DNS, entradas en el archivo hosts
 anulan el servidor de nombres. Si chequeas el servidor de nombres antes del
 archivo hosts, el archivo hosts es usado solo cuando ningun registro DNS esta
-disponible. Ambos tienen sus usos, pero por defecto, el resolver chequea el
+disponible. Ambos tienen sus usos, pero por defecto, el resolvedor chequea el
 archivo hosts, y luego chequea el DNS. Para invertir esto, usa la palabra clave
-lookup. 
+lookup.
 
 lookup bind file
 
@@ -2430,7 +2430,7 @@ Berkeley Internet Name Domain server, o BIND). El opuesto (file bind) es el
 por defecto, asi que no es necesario especificarlo explicitamente.
 
 Preferred IP protocol
-El resolver por defecto busca para registros IPv4 primero, y luego mira los
+El resolvedor por defecto busca para registros IPv4 primero, y luego mira los
 registros IPv6. Para invertirlo, usa la palabra clave family.
 
 family inet6 inet4
@@ -2480,7 +2480,7 @@ apropiado para la mayoria de los usuarios, pero si estas llevando una laptop
 con OpenBSD, tu no eres normal. Tu probablemente quieres alguna de tus 
 configuraciones resolver, como tu lista de busqueda de dominios, mantenerla
 vigente sin importar en que red te encuentres.
-OpenBSD soporta configuracion de resolver permanente en /etc/resolv.conf.tail.
+OpenBSD soporta configuracion de resolvedor permanente en /etc/resolv.conf.tail.
 Cuando el cliente DHCP en OpenBSD obtiene la informacion /etc/resolv.conf desde
 el servidor, este escribe en /etc/resolv.conf y agrega /etc/resolv.conf.tail al
 final.
@@ -2493,14 +2493,14 @@ Ethernet es una red compartida, lo que significa que cualquier maquina diferente
 puede conectarse al mismo Ethernet y puede comunicarse directamente con cada
 otra. Asumo que estas usando Ethernet tal como en una oficina o datacenter.
 Aunque Ethernet ha sido implementado sobre muchos medios fisicos diferentes,
-asumo que estas trabajando com CAT5 o un mejor cable. La eleccion mas popular.
+asumo que estas trabajando con CAT5 o un mejor cable. La eleccion mas popular.
 Si usas un medio diferente, o tu tarjeta soporta multiples medios, necesitaras
 establecer manualmente tu medio preferido o tu interfaz.
 
 Protocol and Hardware
 Ethernet es un protocolo broadcast, lo que significa que cada paquete que
 transmites puede ser enviado a cada host en la red. (Aunque la mayoria de
-hardware Ethernet limita los destinatarios. Ya sea que tu tarjeta de red o tu
+hardware Ethernet limita los destinatarios). Ya sea que tu tarjeta de red o tu
 controlador de dispositivo separe los datos destinados a tu computador de los
 datos destinados para otros equipos. Una seccion de Ethernet donde todos los
 hosts pueden comunicarse directamente con todos los otros hosts, sin involucrar
@@ -2516,19 +2516,19 @@ Direccion Ethernet) el cual es un numero de 48-bit. Los switches controlan el
 trafico enviado a cada host por filtrado en la MAC y direccion IP de los
 dispositivos conectados y (en su mayoria) reenviando frames solo a los 
 dispositivos que estan destinados. Switching reduce la cantidad de trafico y
-carga en cada sistema individual debido al decrecimiento de la cantidad de
+carga en cada sistema individual, debido al decrecimiento de la cantidad de
 trafico que cada host debe clasificar a traves de el.
 En hardware i386 o amd64, la direccion MAC es propiedad de la tarjeta. En otras
-plataformas como SPARC, la direccion MAC es una propiedad del servidor en si
-mismo. Ambos IPv4 e IPv6 usan la direccion MAC para encontrar otros hosts en la
+plataformas como SPARC, la direccion MAC es propiedad del servidor en si mismo. 
+Ambos IPv4 e IPv6 usan la direccion MAC para encontrar otros hosts en la
 red local.
 
 IPv4 and ARP
 Cuando un sistema necesita transmitir datos a otro host basado en IP en la
-Ethernet local, este primero broadcast una peticion Ethernet preguntando,
-Cual direccion MAC es responsable de la direccion IP? Si un host responde, los
-siguientes datos transmitidos a esa IP son enviados a esa direccion MAC. Este
-proceso es manejado por ARP.
+Ethernet local, este primero emite una peticion Ethernet preguntando,
+¿Cual direccion MAC es responsable de esta direccion IP? Si un host responde, 
+los siguientes datos transmitidos a esa IP son enviados a esa direccion MAC. 
+Este proceso es manejado por ARP.
 Usar arp para ver la tabla ARP de tu sistema, el cual es la lista de hosts que
 tu sistema conoce. Con arp -a se muestra todas las direcciones MAC e IPv4 
 hostnames que tu computador conoce.
@@ -2548,10 +2548,10 @@ ejemplo, yo he intentado enviar datos al host salmon, pero mi computador no
 puede alcanzarlo. (Encender salmon ayudaria).
 
 IPv6 and Neighbor Discovery
-Hosts IPv6 tambien usan direcciones MAC para encontrar otro a traves de ND, un
-protocolo IPv6 introducido en el capitulo previo. Interrogar tu cache ND con
-ndp. Las opciones de comando para ndp son intencionalmente similares a las de
-arp.
+Hosts IPv6 tambien usan direcciones MAC para encontrar otro a traves de ND
+(Neighbor discovery), un protocolo IPv6 introducido en el capitulo previo. 
+Interrogar tu cache ND con ndp. Las opciones de comando para ndp son 
+intencionalmente similares a las de arp.
 
 $ ndp -a
 Neighbor                            Linklayer Address   Netif   Expire      S   Flags
@@ -2562,11 +2562,11 @@ fe80::20c:29ff:feb5:7565%vic0       0:c:29:b5:75:65     vic0    permanent   R
 fe80::20c:42ff:fe20:7f42%vic0       0:c:42:20:7f:42     vic0    11h20m47s   S   R
 fe80::1%lo0                         (incomplete)        lo0     permanent   R
 
-Como la ARP cache, el ND cache muestra una direccion IPv6, una direccion fisica,
+Como la ARP cache, la cache ND muestra una direccion IPv6, una direccion fisica,
 la interfaz, y otros detalles para cada host. Veras mas entradas ND que ARP
-porque todas las direcciones de enlace local se muestran en la ND cache.
+porque todas las direcciones de enlace local se muestran en la cache ND.
 Si intentas alcanzar un host que esta directamente atado a tu red local y este
-no responde, chequea la ND cache. Si una entrada ND cache se muestra como
+no responde, chequea la cache ND. Si una entrada cache ND se muestra como
 (incomplete), como con ARP, entonces hay algun tipo de problema basico en la
 conectividad.
 
@@ -2599,10 +2599,10 @@ mientras otras se tropezaran y tambalearan en un pequeño porcentaje de eso.
 La calidad de los switches tambien variara ampliamente.
 Tiene mas sentido si piensas de la velocidad fijada en Ethernet como un
 lenguaje. Por ejemplo, podria reclamar que hablo ruso y german, pero yo
-detuve el estudio de lenguajes extranjeros en 1985. Cuando yo fui a Alemania
+detuve el estudio de lenguajes extranjeros en 1985. Cuando fui a Alemania
 en 2007, maneje cerca de tres palabras por minuto, con la ayuda de una tarjeta
 traductora y un libro. Si fuera una tarjeta Ethernet, el fabricante podria
-reclamar que yo hablo german y ruso, enviarme a siberia.
+reclamar que yo hablo german y ruso, y enviarme a siberia.
 Obten un hardware decente. No preguntes en la lista de OpenBSD, aunque ya lo
 hicieron y las recomendaciones aun se mantienen.
 
@@ -2620,7 +2620,7 @@ Antes de asignar una direccion estatica, necesitaras lo siguiente.
 Armado con esta informacion, conecta tu sistema a la red y sigue leyendo.
 Discutire ifconfig y route para hacer cambios manualmente, y luego revisare 
 como establecerlos automaticamente en el booteo. En cualquier caso debes
-configurar el resolver como discutimos al principio del capitulo.
+configurar el resolvedor como discutimos al principio del capitulo.
 
 Using ifconfig
 Si instalaste OpenBSD sobre una red, tu conexion Ethernet deberia estar ya
@@ -2698,8 +2698,8 @@ ifconfig para ambos IPv4 e IPv6.
 
 # ifconfig fxp0 192.0.2.55 delete
 
-El efecto es inmediato, asi que asegurate de no quedar/encerrarse fuera del
-sistema removiendo todas las direcciones IP accesibles, o removiendo la unica
+El efecto es inmediato, asi que asegurate de no quedar fuera del sistema 
+removiendo todas las direcciones IP accesibles, o removiendo la unica
 direccion de tu demonio SSH conectado. (En raras ocasiones, conexiones 
 existentes con direcciones eliminadas siguen trabajando, pero por lo general no
 es asi, asi que no cuentes con ello).
@@ -2732,14 +2732,14 @@ Es importante notar que todas las conexiones salientes en un host con una
 conexion de red usa la direccion IP primaria. Por ejemplo tu podrias tener
 2000 direcciones IP enlazadas a una interfaz, pero cuando tu ssh sale, la
 conexion viene de la direccion primaria. Recuerda esto cuando escribes las
-reglas de firewall o listas de control de acceso, porque mientras algunos
+reglas de firewall o listas de control de acceso, por que mientras algunos
 programas tienen una opcion para establecer una direccion fuente diferente,
 ellos son la excepcion. El kernel OpenBSD no diferencia entre una direccion
 IP primaria y aliases. Este solo mantiene una lista de direcciones IP. Pero
 usara la primera direccion en su lista como la direccion fuente a menos que
 diga lo contrario. Si un host tiene multiples conexiones de red, la direccion
 de origen de conexiones salientes es la direccion IP principal de la interfaz 
-de red en la cual los paquetes dejan el sistema.
+de red por la cual los paquetes dejan el sistema.
 
 Para remover un alias, usa la opcion delete de ifconfig y da la direccion IP
 sin mascara.
@@ -2754,6 +2754,7 @@ Si eliminas la direccion principal de una interfaz, el primer alias se convierte
 en la direccion IP principal. Si no tienes direcciones IP alias restantes y 
 remueves la direccion IP principal, esa interfaz detiene el paso de trafico IP.
 
+***
 Configuring Default Routes
 Usar route para configurar rutas por defecto para cada protocolo.
 
