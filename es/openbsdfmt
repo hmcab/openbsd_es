@@ -2754,7 +2754,6 @@ Si eliminas la direccion principal de una interfaz, el primer alias se convierte
 en la direccion IP principal. Si no tienes direcciones IP alias restantes y 
 remueves la direccion IP principal, esa interfaz detiene el paso de trafico IP.
 
-***
 Configuring Default Routes
 Usar route para configurar rutas por defecto para cada protocolo.
 
@@ -2783,7 +2782,7 @@ Para IPv6, corre rtsol en su lugar.
 
 # rtsol fxp0
 
-Recuerda que la autoconfiguracion IPv6 no configura tu resolver. Necesitaras
+Recuerda que la autoconfiguracion IPv6 no configura tu resolvedor. Necesitaras
 aprovecharte del servidor DNS IPv4 o configurar /etc/resolv.conf manualmente.
 
 Configuring the Network at boot
@@ -2798,29 +2797,28 @@ de configuracion /etc/hostname.fxp0, la interfaz wireless wpi0 usa
 todos los archivos hostname.if y si este encuentra una interfaz fisica que
 concuerde o puede crear una interfaz logica que lo haga, este configura la
 interfaz como corresponde.
+
 Para configurar una interfaz con una direccion IPv4, ingrese la siguiente linea
 en hostname.if en el formato.
 
-inet ipaddress netmask broadcastaddress ifconfig-options
+inet ipaddress netmask broadcast-address ifconfig-options
 
-La direccion broadcast y opciones son opcionales. Para usar las opciones sin
+La direccion broadcast y las opciones son opcionales. Para usar las opciones sin
 especificar una direccion broadcast, use NONE para la direccion broadcast. 
-Puedes usar slash / para la mascara de red de el decimal equivalente.
+Puedes usar slash / para la mascara de red con el decimal equivalente.
 Similarmente, agregas una direccion IPv6 con lo siguiente.
 
 inet6 ipv6address/prefix ifconfig-options
 
 Para darle a fxp0 la direccion IPv4 de 192.0.2.226  255.255.255.240 y la
-direccion IPv6 de 2001:db8:0:12::2/64 en el booteo, use lo siguiente en
-/etc/hostname.fxp0.
+direccion IPv6 de 2001:db8:0:12::2/64 en el booteo, use la sgte configuracion
+en /etc/hostname.fxp0.
 
 inet 192.0.2.226 255.255.255.240 NONE description 'top card'
 inet6 2001:db8:0:12::2/64
 
 Aqui yo defino una descripcion a la interfaz que se mostrara en la salida de
-ifconfig.
-Para crear una direccion IP alias en el boot, usa la palabra alias en
-hostname.if.
+ifconfig. Para crear una direccion IP alias en el boot, usa la palabra alias.
 
 inet alias 192.0.2.230/32
 inet6 alias 2001:db8:0:12::3/64
@@ -2859,7 +2857,7 @@ sistema.
 
 Trunking
 Servidores pueden tener discos duros redundantes, fuentes de alimentacion, etc.
-OpenBSD soporta conexiones de red dedundantes combinando multiples enlaces
+OpenBSD soporta conexiones de red redundantes combinando multiples enlaces
 Ethernet en un unico enlace virtual, o trunk/troncal. Podras encontrarlo tambien
 como link aggregation, network adapter teaming o bonding.
 
@@ -2875,7 +2873,7 @@ con aproximadamente el mismo ancho de banda como la suma de las interfaces
 individuales. LACP es altamente tolerante-a-fallos, y casi todos los switches
 gestionados de gama alta deberian soportarlo. Si tu switch soporta LACP, usalo,
 pero deberas configurarlo. "LACP on the switch ports before this kind of trunk 
-will pass traffic."
+will pass traffic." <- No logro darle sentido.
 En el metodo roundrobin, OpenBSD envia frames a traves de conexiones activas
 del trunk/troncal usando un planificador roundrobin. El trunk/troncal acepta 
 paquetes entrantes en cualquier puerto, y un planificador roundrobin rota entre
@@ -2885,17 +2883,17 @@ solo necesitan dos puertos en la misma VLAN.
 En el caso de failover, OpenBSD envia y recibe todo el trafico sobre el primer
 puerto en el troncal, y si ese puerto falla, este cambia a otro puerto activo.
 El metodo failover no da un ancho de banda adicional, no requiere ninguna ayuda
-de un switch, e incluso trabajo en viejos hubs.
+de un switch, e incluso trabaja en viejos hubs.
 
 Trunk Configuration
-Como ejemplo, configuraremos los puertos em0 y em1 en failover trunk trunk0.
+Como ejemplo, configuraremos los puertos em0 y em1 en trunk failover como trunk0.
 Los puertos subyacentes no han sido configurados antes, asi que iniciamos
 activando estas interfaces sin ninguna configuracion.
 
 # ifconfig em0 up
 # ifconfig em1 up
 
-Ahora creamos el failover trunk con ifconfig y agregamos estos puertos a este
+Ahora creamos el trunk failover con ifconfig y agregamos los puertos a este,
 haciendo la interfaz trunk0 usable.
 
 # ifconfig trunk0 trunkproto failover
@@ -2917,8 +2915,8 @@ trunk. Encontraras una lista completa en trunk(4).
 Trunks at Boot
 
 Configura tu trunk en /etc/hostname.if. Por ejemplo, supongamos que necesitas
-editar hostname.em0, hostname.em1 y hostname.trunk0. Ambos de los archivos em
-tiene una unica palabra:
+editar hostname.em0, hostname.em1 y hostname.trunk0. Ambos archivos em tienen 
+una unica palabra:
 
 up
 
@@ -2936,7 +2934,7 @@ Tu trunk deberia iniciar ahora en el boot.
 
 Note que los trunks no necesariamente consisten de interfaces que usen el mismo
 tipo de medio fisico. Si te sientes aventurero, tu podrias intentar replicar lo
-que algunos desarrolladores OpenBSD y usuarios han hecho: Trunk en conjunto
+que algunos desarrolladores OpenBSD y usuarios han hecho: Un trunk mezclado de
 una interfaz cableada y no-cableada, y todas tus conexiones estaran a salvo,
 cuando desconectes tu puerto Ethernet, o si lo conectas de nuevo y tomas tu
 punto de acceso para mantenimiento.
@@ -2949,7 +2947,7 @@ En terminos OpenBSD, un cableado puede llevar multiples redes, y configurando
 una interfaz adicional, puedes comunicarte con aquellas redes adicionales como
 si ellas tuvieran su propio cableado privado. El cableado puede unicamente
 traer datos, sin embargo, todas las VLANs y redes regulares (o VLAN nativas)
-que comparten el cable comparte el mismo ancho de banda.
+que comparten el cable comparten el mismo ancho de banda.
 Los frames VLAN que llegan a tu tarjeta de red son como frames regulares 
 Ethernet, con una cabecera adicional antes del frame que dice "Esto es parte
 de VLAN numero ...". Cada VLAN es identificada por un numero. VLAN numero 1 es
@@ -2975,11 +2973,11 @@ Si el switch no puede enviar tagged VLANs a tu servidor, no podras usar VLANs.
 Configuring VLAN devices
 OpenBSD crea interfaces vlan a pedido. Para crear el mecanismo, necesitas
 saber a cual dispositivo fisico quieres atar la VLAN y el numero de VLAN que
-esperas. Creas la interface vlan con ifconfig.
+esperas. Para crear la interface vlan con ifconfig usas lo sgte.
 
 # ifconfig vlanX vlan vlan# vlandev interface
 
-Si no especificas en numero VLAN, OpenBSD asigna el numero VLAN a partir del
+Si no especificas un numero VLAN, OpenBSD asigna el numero VLAN a partir del
 numero de la interfaz. Por ejemplo, aqui creamos la interfaz vlan3 y usamos este
 para acceder a VLAN3 sobre la interfaz fxp0.
 
@@ -3012,8 +3010,6 @@ rtsol
 
 OpenBSD deberia encontrar este archivo en el booteo y crear la interfaz acorde 
 a tus comandos.
-
-
 
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 13 Manejo de software
